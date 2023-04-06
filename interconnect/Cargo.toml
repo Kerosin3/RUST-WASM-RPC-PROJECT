@@ -1,0 +1,19 @@
+[package]
+name = "interconnect"
+version = "0.1.0"
+authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
+
+#[workspace]
+resolver = "2"
+
+description = "common interconnect sources"
+license = "Apache-2.0"
+#readme = "README.md"
+#keywords = ["sdk", "wapc", "webassembly", "wasm", "wasmtime"]
+#categories = ["wasm", "api-bindings"]
+[lib]
+name = "libinteronnect"
+path = "./src/lib.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }

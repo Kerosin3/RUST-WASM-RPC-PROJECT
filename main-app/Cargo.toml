@@ -24,6 +24,7 @@ tokio = { version = "1.27.0", features = ["full"] }
 wasm-core= { path= "../wasm-core"}
 wapc-codec = {path = "../wasm-core/wapc-codec"}
 wapc = {path = "../wasm-core/wapc"}
+interconnect = {path= "../interconnect"}
 wasmtime_runner = {path = "../wasm-core/wasmtime_runner"}
 serde = { version = "1.0", features = ["derive"] }
 log = "0.4"

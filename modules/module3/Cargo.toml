@@ -1,9 +1,10 @@
 cargo-features = ["per-package-target"]
 [package]
-name = "module1-hash"
+name = "module3-hash"
 version = "0.1.0"
-authors = ["Jarrod Overson <jsoverson@gmail.com>"]
+authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
 edition = "2021"
+resolver = "2"
 forced-target = "wasm32-unknown-unknown"
 [lib]
 crate-type = ["cdylib"]
@@ -13,8 +14,8 @@ wapc-guest = { path = "../../wasm-core/wapc-guest" }
 wapc-codec = { path = "../../wasm-core/wapc-codec" }
 serde = { version = "1.0", features = ["derive"] }
 rmp-serde = { version = "1.0", optional = true }
+interconnect = {path="../../interconnect"}
 
 [profile.release]
-# Optimize for small code size
 opt-level = "s"
 lto = true

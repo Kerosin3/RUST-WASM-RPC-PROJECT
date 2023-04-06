@@ -2,6 +2,8 @@
 members = [
 	"main-app",
 	"wasm-core",
+	"modules/*",
+	"interconnect"
 ]
 
 [profile.release]
