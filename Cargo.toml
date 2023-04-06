@@ -3,9 +3,11 @@ members = [
 	"main-app",
 	"wasm-core",
 	"modules/*",
-	"interconnect"
+	"interconnect",
+	"filler"
 ]
 
+exclude = ["./test_systemd","./filler","./server"]
 [profile.release]
 panic = 'abort'
 codegen-units = 1

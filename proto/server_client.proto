@@ -1,0 +1,50 @@
+syntax = "proto3";
+package transport_interface;
+
+import "google/protobuf/timestamp.proto";
+//import "google/protobuf/type.proto";
+// имя должно начинаться так же как пакедж но с большой! и дальше также! одинаковое!
+service Transport_interface{
+    rpc establish_connection (ClientRequest) returns (ServerResponse);
+    rpc assign_arena (ClientRequest) returns (ServerResponse ); 
+    rpc client_command (ClientRequest) returns (ServerResponse ); 
+}
+
+enum Connection{
+     client = 0;
+     agent = 1;
+}
+
+enum ClientCommand{
+     InitName = 0;
+     ListBattles = 1;
+     AssignBattle = 3;
+     Control = 4;
+}
+
+
+message ClientRequest {
+	Connection type_c = 1;
+	ClientCommand command = 2;
+	google.protobuf.Timestamp timestamp = 3;
+	optional string payload = 4;
+}
+
+message ServerResponse {
+//  string name = 1;
+//  int32 id = 2;  // Unique ID number for this person.
+//  string email = 3
+    string server_answer = 1;
+//    bytes hash = 3;
+//    google.protobuf.Timestamp timestamp = 2;
+}
+//  message PhoneNumber {
+//    string number = 1;
+//  }
+  //repeated PhoneNumber phones = 4; // Vec of phones
+//}
+
+// Our address book file is just one of these.
+//message AddressBook {
+//  repeated Person people = 1;
+//}

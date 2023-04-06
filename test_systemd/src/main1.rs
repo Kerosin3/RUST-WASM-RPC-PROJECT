@@ -4,7 +4,6 @@ use signal_hook::flag;
 use simple_logger::SimpleLogger;
 use std::io::Error;
 use std::path::Path;
-use std::process;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
@@ -48,8 +47,18 @@ fn main() {
         Err(e) => eprintln!("DaemonizrError: {}", e),
         Ok(()) => { /* We are in daemon process now */ }
     };
-    let pid = process::id();
-    sd_journal_log!(4, "Launched daemon with pid {}", pid);
+
+    SimpleLogger::new()
+        .env()
+        .with_timestamp_format(time::macros::format_description!(
+            "[year]-[month]-[day] [hour]:[minute]:[second]"
+        ))
+        .init()
+        .unwrap();
+    warn!("This is an example message."); // to stdout
+                                          //    journal::print(1, &format!("Rust can talk to the journal: {:?}", 4));
+                                          //    journal::JournalLog::init().unwrap();
+    sd_journal_log!(4, "HI {}", "from the app");
     let term = Arc::new(AtomicBool::new(false));
     flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term)).unwrap();
     while !term.load(Ordering::Relaxed) {
@@ -57,10 +66,11 @@ fn main() {
         thread::sleep(std::time::Duration::from_secs(1));
     }
     println!("Received SIGTERM kill signal. Exiting...");
-    //     println!("write something to stdout");
-    //     eprintln!("write something to stderr");
-    println!("Daemon exits");
-    sd_journal_log!(4, "daemon with pid {} termnated", pid);
+    /* actual daemon work goes here */
+    println!("write something to stdout");
+    eprintln!("write something to stderr");
+    sleep(Duration::from_secs(60));
+    println!("Daemon exits.")
 }
 //use systemd::daemon::{notify, STATE_WATCHDOG};
 //notify(false, [(STATE_WATCHDOG, "1")].iter()).unrwap();
