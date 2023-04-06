@@ -15,7 +15,7 @@ use connection_processor::server_connection_processing::Implement::*;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = "[::1]:8080".parse().unwrap();
     let server_main_service = RpcServiceServer::default();
-
+    //     let file_appender = tracing_appender::rolling::hourly(".", "test.log");
     let subscriber = fmt()
         .compact()
         .with_line_number(true)

@@ -1,34 +1,46 @@
 #![allow(unused_imports)]
 use std::io::stdin;
 extern crate hex_slice;
+//use anyhow::{Ok, Result};
+// use std::io::{Error, ErrorKind};
 use transport::transport_interface_client::TransportInterfaceClient;
-use transport::{ClientCommand, ClientRequest, Connection, ServerResponse};
+use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = TransportInterfaceClient::connect("http://[::1]:8080").await?;
+    let mut client = TransportInterfaceClient::connect("http://[::1]:8080")
+        .await
+        .unwrap();
     let response = client
-        .establish_connection(BaseRequest::construct(Cmd1::Name))
-        .await?;
-    let player_name = response.into_inner().server_answer;
-    println!("MY NAME IS {}", player_name);
-    //------------------------------------------------------
-    let response = client
-        .assign_arena(BaseRequest::construct(Cmd1::Battle))
-        .await?;
-    let battle_name = response.into_inner().server_answer;
-    println!("BATTLENAME IS {}", battle_name);
-    //-------------------------------------
-    'process_input: loop {
-        let cmd_text = take_input();
-        let response = client
-            .client_command(BaseRequest::construct(Cmd1::Control(cmd_text)))
-            .await?;
+        .establish_connection(BaseRequest::construct(Cmd1::Establish))
+        .await
+        .unwrap();
+    let init = response.into_inner();
+
+    if let Some(t) = StatusMsg::from_i32(init.msg_status) {
+        if t != StatusMsg::Proceed {
+            //             return Err(std::io::Error:: .into());
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "fron initial connect",
+            ))
+            .into());
+        }
+    } else {
+        return Err(Box::new(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "error unwrapping status",
+        ))
+        .into());
     }
-    Ok(())
+    println!("finishing!");
+    //------------------------------------------------------
+    loop {
+        take_input();
+    }
 }
 fn take_input() -> String {
     println!("\n-----type a command------");
@@ -41,30 +53,23 @@ fn take_input() -> String {
 }
 struct BaseRequest {}
 enum Cmd1 {
-    Name,
-    Battle,
-    Control(String),
+    Establish,
+    Sending(String),
 }
 impl BaseRequest {
     fn construct(pattern: Cmd1) -> tonic::Request<ClientRequest> {
         match pattern {
-            Cmd1::Name => tonic::Request::new(ClientRequest {
-                type_c: Connection::Client.into(),
-                command: ClientCommand::InitName.into(),
+            Cmd1::Establish => tonic::Request::new(ClientRequest {
+                command: ClientCommand::Connect.into(),
                 timestamp: Some(std::time::SystemTime::now().into()),
                 payload: None,
+                serial: 0,
             }),
-            Cmd1::Battle => tonic::Request::new(ClientRequest {
-                type_c: Connection::Client.into(),
-                command: ClientCommand::AssignBattle.into(),
-                timestamp: Some(std::time::SystemTime::now().into()),
-                payload: None,
-            }),
-            Cmd1::Control(s) => tonic::Request::new(ClientRequest {
-                type_c: Connection::Client.into(),
-                command: ClientCommand::Control.into(),
+            Cmd1::Sending(s) => tonic::Request::new(ClientRequest {
+                command: ClientCommand::Connect.into(),
                 timestamp: Some(std::time::SystemTime::now().into()),
                 payload: Some(s),
+                serial: 0,
             }),
         }
     }
