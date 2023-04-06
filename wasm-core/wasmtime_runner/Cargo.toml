@@ -1,0 +1,49 @@
+[package]
+name = "wasmtime_runner"
+version = "1.5.0"
+authors = [
+  "Kevin Hoffman <alothien@gmail.com>",
+  "Jarrod Overson <jsoverson@gmail.com>",
+  "Phil Kedy <phil.kedy@gmail.com>",
+  "Flavio Castelli <flavio@castelli.me>",
+]
+edition = "2021"
+description = "A wasmtime engine provider for the waPC host"
+license = "Apache-2.0"
+homepage = "https://wapc.io"
+documentation = "https://docs.rs/wasmtime-provider"
+readme = "README.md"
+keywords = ["sdk", "wapc", "webassembly", "wasm", "wasmtime"]
+categories = ["wasm", "api-bindings"]
+
+[package.metadata.workspaces]
+independent = true
+
+[badges.maintenance]
+status = "actively-developed"
+
+[features]
+default = ["wasi"]
+cache = ["wasmtime/cache"]
+wasi = ["wasi-common", "wasi-cap-std-sync", "wasmtime-wasi"]
+
+[dependencies]
+wapc = { path = "../wapc", version = "1.1.0" }
+log = "0.4"
+wasmtime = "7.0"
+anyhow = "1.0"
+thiserror = "1.0"
+cfg-if = "1.0.0"
+parking_lot = "0.12"
+hex = "0.4.3"
+smallvec = "1.10.0"
+console = "0.15.5"
+serde = { version = "1.0", features = ["derive"] }
+# feature = wasi
+wasmtime-wasi = { version = "7.0", optional = true }
+wasi-common = { version = "7.0", optional = true }
+wasi-cap-std-sync = { version = "7.0", optional = true }
+
+[dev-dependencies]
+wapc-codec = { path = "../wapc-codec" }
+env_logger = "0.10"

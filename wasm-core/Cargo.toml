@@ -1,0 +1,24 @@
+[package]
+name = "wasm-core"
+version = "0.1.0"
+authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
+
+#[workspace]
+resolver = "2"
+
+description = "modular RPC (WASM) cypher library"
+license = "Apache-2.0"
+#readme = "README.md"
+#keywords = ["sdk", "wapc", "webassembly", "wasm", "wasmtime"]
+#categories = ["wasm", "api-bindings"]
+[lib]
+name = "libmoses"
+path = "./lib_moses/src/lib.rs"
+
+[dependencies]
+wapc-codec = { path = "./wapc-codec" }
+wapc = { path = "./wapc" }
+wasmtime_runner = {path = "./wasmtime_runner"}
+hex = "0.4.3"
+anyhow = "1.0.70"
+

@@ -1,0 +1,33 @@
+[package]
+name = "main-app"
+version = "0.1.0"
+edition = "2021"
+resolver = "2"
+license = "Apache-2.0"
+keywords = ["wapc", "webassembly", "wasm", "wasmtime"]
+categories = ["wasm"]
+authors = [
+  "Alex Vdovydchenko <keromvp@gmail.com>",
+]
+description = "main application"
+
+[[bin]]
+name = "main-application"
+path = "src/main.rs"
+
+[badges.maintenance]
+status = "actively-developed"
+
+[dependencies]
+redis = {version = "0.23.0", features = ["tokio-comp"]}
+tokio = { version = "1.27.0", features = ["full"] }
+wasm-core= { path= "../wasm-core"}
+wapc-codec = {path = "../wasm-core/wapc-codec"}
+wapc = {path = "../wasm-core/wapc"}
+wasmtime_runner = {path = "../wasm-core/wasmtime_runner"}
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+hex = "0.4.3"
+env_logger = "0.10.0"
+project-root = "0.2.2"
+#rand = { git = "https://github.com/rust-lang-nursery/rand", branch = "next" }

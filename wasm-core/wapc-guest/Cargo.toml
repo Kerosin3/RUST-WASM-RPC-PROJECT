@@ -1,0 +1,31 @@
+[package]
+name = "wapc-guest"
+version = "1.1.0"
+authors = [
+  "Kevin Hoffman <alothien@gmail.com>",
+  "Jarrod Overson <jsoverson@gmail.com>",
+  "Phil Kedy <phil.kedy@gmail.com>",
+]
+edition = "2021"
+description = "Guest SDK for building waPC-compliant WebAssembly Modules"
+license = "Apache-2.0"
+homepage = "https://wapc.io"
+documentation = "https://docs.rs/wapc-guest"
+readme = "README.md"
+keywords = ["sdk", "wapc", "webassembly", "wasm", "waxosuit"]
+categories = ["wasm", "api-bindings"]
+
+[package.metadata.workspaces]
+independent = true
+
+[badges.maintenance]
+status = "actively-developed"
+
+[features]
+default = []
+codec = ["wapc-codec"]
+
+[dependencies]
+once_cell = "1.9"
+wapc-codec = { path = "../wapc-codec", optional = true, version = "1.1.0" }
+parking_lot = "0.12"
