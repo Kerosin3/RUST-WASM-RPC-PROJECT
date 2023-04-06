@@ -21,4 +21,4 @@ wapc = { path = "./wapc" }
 wasmtime_runner = {path = "./wasmtime_runner"}
 hex = "0.4.3"
 anyhow = "1.0.70"
-
+serde = { version = "1.0", features = ["derive"] }

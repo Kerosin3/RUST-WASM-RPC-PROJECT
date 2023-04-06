@@ -58,3 +58,19 @@ pub mod wasm_lib {
         Ok(vec![])
     }
 }
+pub mod serdes {
+
+    extern crate serde;
+    use self::serde::{Deserialize, Serialize};
+    //simple struct to pass to wasm module and calc hash inside
+    #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+    pub struct PersonSend {
+        pub first_name: String,
+    }
+    // recv struct
+    #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+    pub struct PersonHashedRecv {
+        pub first_name: String,
+        pub hash: u64,
+    }
+}

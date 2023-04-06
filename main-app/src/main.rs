@@ -1,22 +1,11 @@
-use log::{debug, error, info, warn};
-use serde::{Deserialize, Serialize};
-use wapc_codec::messagepack::{deserialize, serialize};
-
-//simple struct to pass to wasm module and calc hash inside
-#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
-struct PersonSend {
-    first_name: String,
-}
-// recv struct
-#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
-struct PersonHashedRecv {
-    first_name: String,
-    hash: u64,
-}
+use libmoses::serders::*;
 use libmoses::wasm_lib::{Engine, HostProvider};
+use log::{debug, error, info, warn};
 use std::path::Path;
 use wapc::WapcHost;
+use wapc_codec::messagepack::{deserialize, serialize};
 use wasmtime_runner::WasmtimeEngineProviderBuilder;
+
 pub fn main() -> Result<(), wapc::errors::Error> {
     env_logger::init();
     println!("Starting demo");
