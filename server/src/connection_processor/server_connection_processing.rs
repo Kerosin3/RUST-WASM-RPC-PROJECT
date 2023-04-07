@@ -23,7 +23,10 @@ pub mod Implement {
         println!("aaaaaaaaaa");
         let mut mock_server = Box::new(MockRpcServiceServer::new());
     }*/
-
+    pub struct SharedData {
+        continue_background_tasks: bool,
+        data: [u8: 1048576] // 1 MB
+    }
     #[derive(Debug, Default)]
     pub struct RpcServiceServer {}
     // mocking

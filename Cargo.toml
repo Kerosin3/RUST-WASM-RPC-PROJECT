@@ -7,7 +7,7 @@ members = [
 	"filler"
 ]
 
-exclude = ["./test_systemd","./filler","./server","module3_bkp"]
+exclude = ["./test_systemd","./filler","./server","module3_bkp","/proc2"]
 [profile.release]
 panic = 'abort'
 codegen-units = 1

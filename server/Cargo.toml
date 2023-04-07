@@ -28,6 +28,7 @@ tracing-appender = "0.2.2"
 tokio = { version = "1.27.0", features = ["macros", "full"] }
 redis = { version = "0.23.0", features = ["tokio-comp"] }
 anyhow = "1.0.68"
+ipc-channel = "0.16.0"
 [build-dependencies]
 tonic-build = "0.8.3"
 prost-build = "0.11.8"
