@@ -15,6 +15,8 @@ wapc-codec = { path = "../../wasm-core/wapc-codec" }
 serde = { version = "1.0", features = ["derive"] }
 rmp-serde = { version = "1.0", optional = true }
 interconnect = {path="../../interconnect"}
+aes-gcm = {version = "0.10.1", features = ["heapless"]}
+getrandom = { version = "0.2"  }
 #getrandom = { version = "0.2" ,features = ["js"] }
 #wasm-bindgen = "0.2.84"
 [profile.release]

@@ -21,20 +21,22 @@ pub fn main() -> Result<(), wapc::errors::Error> {
     let func = "serdes_example".to_string();
     let engine = Engine::new(module_bytes1.to_owned()); // load engine
     let host = HostProvider::assign(engine).unwrap();
-    println!("Calling guest (wasm) function: {}", func);
-    // supply person struct
-    let person = StructSend {
-        payload: name.clone(),
-        id: 0,
-        oper: Operation::Two,
-    };
-    let serbytes: Vec<u8> = serialize(&person).unwrap(); // serialize
-    let encoded = hex::encode(serbytes.clone()); // examine
-    println!("serialized message: {}", encoded);
-    println!("calling wasm guest function to process text [{}]", name);
-    println!("---------------CALLING MAIN MODULE------------------");
-    let result = host.execute_func_call(&func, &serbytes).unwrap();
-    let recv_struct: StructRecv = deserialize(&result).unwrap();
-    println!("Deserialized : {:?}", recv_struct);
+    for i in 0..20 {
+        println!("Calling guest (wasm) function: {}", func);
+        // supply person struct
+        let person = StructSend {
+            payload: name.clone(),
+            id: 0,
+            oper: Operation::Two,
+        };
+        let serbytes: Vec<u8> = serialize(&person).unwrap(); // serialize
+        let encoded = hex::encode(serbytes.clone()); // examine
+        println!("serialized message: {}", encoded);
+        println!("calling wasm guest function to process text [{}]", name);
+        println!("---------------CALLING MAIN MODULE------------------");
+        let result = host.execute_func_call(&func, &serbytes).unwrap();
+        let recv_struct: StructRecv = deserialize(&result).unwrap();
+        println!("Deserialized : {:?}", recv_struct);
+    }
     Ok(())
 }

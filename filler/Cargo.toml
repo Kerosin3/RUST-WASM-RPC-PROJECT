@@ -15,9 +15,11 @@ hex-slice = "0.1.4"
 prost = "0.11.8"
 prost-types = "0.11.8"
 smallvec = "1.10.0"
-tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.27.0", features = ["macros", "full"] }
+redis = { version = "0.23.0", features = ["tokio-comp"] }
 tonic = "0.8.3"
-
+random-string = "1.0.0"
+random_name_generator = "0.3.4"
 
 [build-dependencies]
 tonic-build = "0.8.3"
