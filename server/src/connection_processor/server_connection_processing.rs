@@ -1,9 +1,11 @@
 pub mod Implement {
-    //     use crate::connection_processor::input::InputProcessor::parse_input;
+    //----------------------------------------------------------------//
+
+    //----------------------------------------------------------------//
+    //----------------------------------------------------------------//
     use crate::connection_processor::shmem_server::memoryprocessor::*;
     use anyhow::Result;
-    use mockall::predicate::*;
-    use mockall::*;
+    use libshmem::datastructs::MESSAGES_NUMBER;
     use redis::streams::*;
     use redis::{
         from_redis_value,
@@ -15,18 +17,14 @@ pub mod Implement {
     use transport::transport_interface_server::{TransportInterface, TransportInterfaceServer};
     use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
     pub mod transport {
-        // import proto
         tonic::include_proto!("transport_interface");
     }
     use tonic::{transport::Server, Request, Response, Status};
-    //  use crate::RpcServiceServer;
-    /*    pub fn printsome() {
-        println!("aaaaaaaaaa");
-        let mut mock_server = Box::new(MockRpcServiceServer::new());
-    }*/
+    //----------------------------------------------------------------//
+    //----------------------------------------------------------------//
+    //----------------------------------------------------------------//
     #[derive(Debug, Default)]
     pub struct RpcServiceServer {}
-    // mocking
     #[tonic::async_trait]
     impl TransportInterface for RpcServiceServer {
         async fn establish_connection(
@@ -57,22 +55,22 @@ pub mod Implement {
                     ClientCommand::Sending => {
                         tracing::info!("processing message pack");
                         let redis_connection = Client::open("redis://127.0.0.1").unwrap();
+                        tracing::info!("connected to redis!");
                         let mut con = redis_connection.get_tokio_connection().await.unwrap();
-                        let len: i32 = con.xlen("my_stream").await.unwrap();
-                        println!("->> my_stream len {}\n", len);
+                        let _len: i32 = con.xlen("my_stream").await.unwrap();
                         let result: Option<StreamRangeReply> = con
-                            .xrevrange_count("stream_storage", "+", "-", 50)
+                            .xrevrange_count("stream_storage", "+", "-", MESSAGES_NUMBER)
                             .await
                             .unwrap();
                         if let Some(reply) = result {
                             let mut j: u32 = 0;
                             for stream_id in reply.ids {
-                                println!("deleting {} {}", "my_stream", stream_id.id);
-                                println!("->> xrevrange stream entity: {}  ", stream_id.id);
+                                //        println!("deleting {} {}", "my_stream", stream_id.id);
+                                //      println!("->> xrevrange stream entity: {}  ", stream_id.id);
                                 for (name, value) in stream_id.map.iter() {
                                     let val = from_redis_value::<String>(value).unwrap();
 
-                                    println!("  serial:{}->> {}: {}", j, name, val);
+                                    tracing::info!("deleting: [serial:{}  {}: {}]", j, name, val);
                                     fill_sh_memory(name.to_string(), val, j);
                                     j += 1;
                                 }

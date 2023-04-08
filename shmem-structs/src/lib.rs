@@ -1,12 +1,20 @@
+#![allow(clippy::new_without_default)]
 pub mod datastructs {
-
+    //##############################################################3
+    //##############################################################3
+    //##############################################################3
+    pub const STRING_SIZE: usize = 512;
+    pub const MESSAGES_NUMBER: u32 = 10;
+    pub const MEMFILE: &str = "memshare";
+    pub const MEMSIZE: usize = 1048576;
+    //##############################################################3
+    //##############################################################3
+    //##############################################################3
     extern crate serde;
     extern crate serde_with;
     use self::serde::{Deserialize, Serialize};
     use self::serde_with::serde_as;
     use self::serde_with::Bytes;
-    pub const STRING_SIZE: usize = 512;
-    pub const MEMSIZE: usize = 1048576;
     #[serde_as]
     #[derive(Serialize, Deserialize, Clone, Debug)]
     #[repr(C, packed)]
@@ -29,15 +37,14 @@ pub mod datastructs {
             self.serial = seriall;
         }
         pub fn serialize(&self) -> Vec<u8> {
-            println!("size is {}", bincode::serialized_size(self).unwrap());
             bincode::serialize(self).unwrap()
         }
 
-        pub fn deserialize(src: *const u8, size: usize) -> Self {
+        pub fn deserialize(src: *const u8, _size: usize) -> Self {
             unsafe {
                 let readed_n_msg_bytes: [u8; 1048] = std::ptr::read(src as *const _);
                 let struct1: InterData<512> = bincode::deserialize(&readed_n_msg_bytes).unwrap();
-                return struct1;
+                struct1
             }
         }
         pub fn assign_bytes0(&mut self, t_data: (*mut u8, usize, usize)) {
