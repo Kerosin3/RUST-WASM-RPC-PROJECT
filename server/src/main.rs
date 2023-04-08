@@ -1,12 +1,16 @@
 #![allow(unused_imports)]
+#![feature(vec_into_raw_parts)]
+
 use prost_types::Timestamp;
 //use std::time::SystemTime;
 use blake2::{Blake2b512, Blake2s256, Digest};
+use connection_processor::server_connection_processing::Implement;
+use libshmem::datastructs::*;
+use shared_memory::*;
+use std::path::Path;
 use tonic::{transport::Server, Request, Response, Status};
 use tracing::Level;
 use tracing_subscriber::fmt;
-//
-use connection_processor::server_connection_processing::Implement;
 use transport::transport_interface_server::{TransportInterface, TransportInterfaceServer};
 mod connection_processor;
 use connection_processor::server_connection_processing::Implement::*;
@@ -48,6 +52,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     } */
 
+    let root_path = project_root::get_project_root().unwrap();
+    let shmem_flink = Path::new(&root_path).join("file1");
+    let _ = std::fs::remove_file(&shmem_flink);
+    let memsize: usize = MEMSIZE;
+    let shmem = match ShmemConf::new().size(memsize).flink(&shmem_flink).create() {
+        Ok(mem) => mem,
+        Err(ShmemError::LinkExists) => {
+            eprintln!("shared memory exists!");
+            panic!();
+        }
+        Err(e) => {
+            eprintln!("Unable to create or open shmem flink  {e}");
+            panic!();
+        }
+    };
     let address = "[::1]:8080".parse().unwrap();
     let server_main_service = RpcServiceServer::default();
     //     let file_appender = tracing_appender::rolling::hourly(".", "test.log");

@@ -1,5 +1,6 @@
 pub mod Implement {
-    use crate::connection_processor::input::InputProcessor::parse_input;
+    //     use crate::connection_processor::input::InputProcessor::parse_input;
+    use crate::connection_processor::shmem_server::memoryprocessor::*;
     use anyhow::Result;
     use mockall::predicate::*;
     use mockall::*;
@@ -23,10 +24,6 @@ pub mod Implement {
         println!("aaaaaaaaaa");
         let mut mock_server = Box::new(MockRpcServiceServer::new());
     }*/
-    pub struct SharedData {
-        continue_background_tasks: bool,
-        data: [u8: 1048576] // 1 MB
-    }
     #[derive(Debug, Default)]
     pub struct RpcServiceServer {}
     // mocking
@@ -42,7 +39,7 @@ pub mod Implement {
                 match t {
                     ClientCommand::Connect => {
                         tracing::info!("accepted connection!");
-                        if let Some(stream_name) = name {
+                        if let Some(_stream_name) = name {
                             Ok(tonic::Response::new(transport::ServerResponse {
                                 server_answer: { None },
                                 msg_status: StatusMsg::Proceed.into(),
@@ -68,20 +65,22 @@ pub mod Implement {
                             .await
                             .unwrap();
                         if let Some(reply) = result {
+                            let mut j: u32 = 0;
                             for stream_id in reply.ids {
                                 println!("deleting {} {}", "my_stream", stream_id.id);
                                 println!("->> xrevrange stream entity: {}  ", stream_id.id);
                                 for (name, value) in stream_id.map.iter() {
-                                    println!(
-                                        "  ->> {}: {}",
-                                        name,
-                                        from_redis_value::<String>(value).unwrap()
-                                    );
+                                    let val = from_redis_value::<String>(value).unwrap();
+
+                                    println!("  serial:{}->> {}: {}", j, name, val);
+                                    fill_sh_memory(name.to_string(), val, j);
+                                    j += 1;
                                 }
                                 println!();
-                                let result: RedisResult<i32> =
+                                let _result: RedisResult<i32> =
                                     con.xdel("stream_storage", &[stream_id.id.clone()]).await;
                             }
+                            write_complite()
                         }
                         Ok(tonic::Response::new(transport::ServerResponse {
                             server_answer: { name },

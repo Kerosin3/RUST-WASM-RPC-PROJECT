@@ -4,6 +4,7 @@ members = [
 	"wasm-core",
 	"modules/*",
 	"interconnect",
+	"shmem-structs",
 	"filler"
 ]
 

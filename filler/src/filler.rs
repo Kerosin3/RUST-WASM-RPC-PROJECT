@@ -1,8 +1,8 @@
 #![allow(unused_imports)]
 use std::io::stdin;
 extern crate hex_slice;
-//use anyhow::{Ok, Result};
-// use std::io::{Error, ErrorKind};
+mod client_shmem;
+use client_shmem::shmem_impl::*;
 use random_string::generate;
 use rnglib::{Language, RNG};
 use transport::transport_interface_client::TransportInterfaceClient;
@@ -15,9 +15,14 @@ use redis::{
     streams::{StreamRangeReply, StreamReadOptions, StreamReadReply},
     AsyncCommands, Client,
 };
+const N_MESSAGES: usize = 10;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let root_path = project_root::get_project_root().unwrap();
+    println!("roo is {:?}", root_path);
     let charset = "abcdefg123456789";
+
     let mut client = TransportInterfaceClient::connect("http://[::1]:8080")
         .await
         .unwrap();
@@ -61,8 +66,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ))
         .into());
     }
+    //     std::thread::sleep(std::time::Duration::from_secs(10));
     println!("finishing!");
     //------------------------------------------------------
+    read_shmem(10);
     Ok(())
     /*
     loop {
