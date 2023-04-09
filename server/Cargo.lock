@@ -1602,7 +1602,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bincode",
- "bytes",
  "futures",
  "mockall",
  "num",
@@ -1617,7 +1616,6 @@ dependencies = [
  "serde_with",
  "shared_memory",
  "shmem-structs",
- "slog",
  "thiserror",
  "tokio",
  "tonic",
@@ -1692,12 +1690,6 @@ checksum = "6528351c9bc8ab22353f9d776db39a20288e8d6c37ef8cfe3317cf875eecfc2d"
 dependencies = [
  "autocfg",
 ]
-
-[[package]]
-name = "slog"
-version = "2.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8347046d4ebd943127157b94d63abb990fcf729dc4e9978927fdf4ac3c998d06"
 
 [[package]]
 name = "smallvec"

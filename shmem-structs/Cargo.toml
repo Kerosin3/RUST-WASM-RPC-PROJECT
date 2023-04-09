@@ -3,9 +3,6 @@ name = "shmem-structs"
 version = "0.1.0"
 authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
 
-#[workspace]
-resolver = "2"
-
 description = "common data structures"
 license = "Apache-2.0"
 [lib]

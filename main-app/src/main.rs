@@ -1,10 +1,10 @@
 use libinteronnect::serdes::*;
 use libmoses::wasm_lib::{Engine, HostProvider};
-use log::{debug, error, info, warn};
+
 use std::path::Path;
-use wapc::WapcHost;
+
 use wapc_codec::messagepack::{deserialize, serialize};
-use wasmtime_runner::WasmtimeEngineProviderBuilder;
+
 
 pub fn main() -> Result<(), wapc::errors::Error> {
     env_logger::init();
@@ -19,9 +19,9 @@ pub fn main() -> Result<(), wapc::errors::Error> {
     let module_bytes1 = std::fs::read(module1)
         .expect("WASM module 1 could not be read, run example from wasmtime-provider folder"); // read module 1
     let func = "serdes_example".to_string();
-    let engine = Engine::new(module_bytes1.to_owned()); // load engine
+    let engine = Engine::new(module_bytes1); // load engine
     let host = HostProvider::assign(engine).unwrap();
-    for i in 0..20 {
+    for _i in 0..20 {
         println!("Calling guest (wasm) function: {}", func);
         // supply person struct
         let person = StructSend {

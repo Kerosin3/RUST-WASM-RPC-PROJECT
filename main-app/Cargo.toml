@@ -2,7 +2,6 @@
 name = "main-app"
 version = "0.1.0"
 edition = "2021"
-resolver = "2"
 license = "Apache-2.0"
 keywords = ["wapc", "webassembly", "wasm", "wasmtime"]
 categories = ["wasm"]

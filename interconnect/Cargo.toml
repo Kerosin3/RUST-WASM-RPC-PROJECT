@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
 
 #[workspace]
-resolver = "2"
 
 description = "common interconnect sources"
 license = "Apache-2.0"
