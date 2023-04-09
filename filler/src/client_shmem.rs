@@ -43,7 +43,6 @@ pub mod shmem_impl {
         unsafe {
             for _i in 0..n_msg {
                 let data = InterData::deserialize(ptr_cpy, sizeofstruct);
-                //                 println!(" addr: {:?} data is {:?}", ptr_cpy, data);
                 let data1 = std::str::from_utf8(&data.bytes1).unwrap();
                 let data2 = std::str::from_utf8(&data.bytes2).unwrap();
                 info!("readed key [{}], value [{}]", data1, data2);

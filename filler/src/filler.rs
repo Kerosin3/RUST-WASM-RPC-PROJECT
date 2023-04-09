@@ -1,4 +1,14 @@
 #![allow(unused_imports)]
+//#######################################################
+//#######################################################
+//#######################################################
+const KEY_LEN: usize = 10;
+const _VAL_LEN: usize = 10;
+//#######################################################
+//#######################################################
+//#######################################################
+//-------------------------------------------------------
+//-------------------------------------------------------
 use std::io::stdin;
 extern crate hex_slice;
 use log::*;
@@ -17,6 +27,9 @@ use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
+//-------------------------------------------------------
+//-------------------------------------------------------
+//-------------------------------------------------------
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
@@ -49,13 +62,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let rng = RNG::try_from(&Language::Roman).unwrap();
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let unique_key = generate(9, charset);
+            let unique_key = generate(KEY_LEN, charset);
             let msg = rng.generate_name();
             info!("---[{}]---key={},value={}", _i, unique_key, msg);
             con.xadd("stream_storage", "*", &[(unique_key, msg.clone())])
                 .await?;
         }
-        // send answer OK
+        // send answers OK
         let _response = client
             .establish_connection(BaseRequest::construct(Cmd1::Sending(
                 "stream_storage".to_string(),
@@ -75,23 +88,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //------------------------------------------------------
     read_shmem(MESSAGES_NUMBER);
     Ok(())
-    /*
-    loop {
-        let inpt = take_input();
-        con.set("my_key", "my val").await?;
-        //         let result: String = con.get("my_key").await?;
-    }*/
 }
-/*
-fn take_input() -> String {
-    println!("\n-----type a command------");
-    let mut some_input = String::new();
-    stdin().read_line(&mut some_input).unwrap();
-    let some_input = some_input.trim();
-    let out = format!("#{}", some_input);
-    println!("your command: {out}");
-    out
-}*/
+
 struct BaseRequest {}
 enum Cmd1 {
     Establish,
