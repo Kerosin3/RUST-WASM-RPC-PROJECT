@@ -28,5 +28,15 @@ serde_with = "2.3.2"
 shmem-structs = {path="../shmem-structs"}
 log = "0.4.17"
 env_logger = "0.10.0"
+wasm-core= { path= "../wasm-core"}
+wapc-codec = {path = "../wasm-core/wapc-codec"}
+wapc = {path = "../wasm-core/wapc"}
+interconnect = {path= "../interconnect"}
+wasmtime_runner = {path = "../wasm-core/wasmtime_runner"}
+hex = "0.4.3"
+crossbeam = {version = "0.8.2"}
+crossbeam-channel = "0.5.7"
+crossbeam-queue = "0.3.8"
+
 [build-dependencies]
 tonic-build = "0.8.3"

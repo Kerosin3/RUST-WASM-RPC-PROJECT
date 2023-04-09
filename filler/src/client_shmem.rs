@@ -1,5 +1,8 @@
 pub mod shmem_impl {
 
+    use crate::wasm_processor::implement::*;
+    use crossbeam_channel::unbounded;
+    use crossbeam_queue::ArrayQueue;
     use libshmem::datastructs::*;
     use log::*;
     use rnglib::{Language, RNG};
@@ -10,6 +13,7 @@ pub mod shmem_impl {
     use shared_memory::*;
     use std::mem;
     use std::path::Path;
+    use std::thread;
 
     pub fn read_shmem(n_msg: u32) {
         let root_path = project_root::get_project_root().unwrap();
@@ -40,12 +44,23 @@ pub mod shmem_impl {
 
         let buf_struct = InterData::new(); // dummy
         let sizeofstruct = bincode::serialized_size(&buf_struct).unwrap() as usize;
+        //-------------------------------------------------------------------
+        //-------------------------------------------------------------------
+        let (sender, receiver) = unbounded();
+        let recv1: crossbeam_channel::Receiver<String> = receiver.clone();
+        let handler = thread::spawn(move || {
+            process_in_wasm(recv1).unwrap();
+        });
+
+        //-------------------------------------------------------------------
+        //-------------------------------------------------------------------
         unsafe {
             for _i in 0..n_msg {
                 let data = InterData::deserialize(ptr_cpy, sizeofstruct);
                 let data1 = std::str::from_utf8(&data.bytes1).unwrap();
                 let data2 = std::str::from_utf8(&data.bytes2).unwrap();
                 info!("readed key [{}], value [{}]", data1, data2);
+                sender.send(data1.to_owned()).unwrap(); // sending to wasm module
                 ptr_cpy = ptr_cpy.add(sizeofstruct);
             }
         }
@@ -54,5 +69,6 @@ pub mod shmem_impl {
             *shmem.as_ptr() = 0;
         }
         warn!("clear write ready flag");
+        handler.join().unwrap();
     }
 }

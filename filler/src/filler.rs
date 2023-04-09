@@ -24,9 +24,12 @@ use redis::{
 use rnglib::{Language, RNG};
 use transport::transport_interface_client::TransportInterfaceClient;
 use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
+mod wasm_processor;
+use wasm_processor::implement::*;
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
+use crossbeam_channel::unbounded;
 //-------------------------------------------------------
 //-------------------------------------------------------
 //-------------------------------------------------------
@@ -87,6 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("waiting messages to complite write to shared memory");
     //------------------------------------------------------
     read_shmem(MESSAGES_NUMBER);
+    //------------------------------------------------------
     Ok(())
 }
 
