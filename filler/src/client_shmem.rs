@@ -15,7 +15,7 @@ pub mod shmem_impl {
     use std::path::Path;
     use std::thread;
 
-    pub fn read_shmem(n_msg: u32) {
+    pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<String>) {
         let root_path = project_root::get_project_root().unwrap();
         let shmem_flink = Path::new(&root_path).join("server").join(MEMFILE);
         info!("getted connected to shared memory file");
@@ -51,10 +51,8 @@ pub mod shmem_impl {
         let recv1: crossbeam_channel::Receiver<String> = receiver_signed_msg.clone();
         let recv_val = receiver_ver_key.clone();
         let handler = thread::spawn(move || {
-            process_in_wasm(recv1, recv_val).unwrap();
+            process_in_wasm(recv1, recv_val, recv_right_msg).unwrap();
         });
-
-        //-------------------------------------------------------------------
         //-------------------------------------------------------------------
         unsafe {
             for _i in 0..n_msg {
