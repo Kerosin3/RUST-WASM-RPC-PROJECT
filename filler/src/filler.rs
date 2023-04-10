@@ -82,7 +82,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let msg = rng.generate_name();
             let signed_msg = msg;
             //             let signed_msg = signing_key.sign(msg).to_string();
-            info!("---[{}]---key={:?},value={:?}", _i, unique_key, signed_msg);
+            println!(
+                "---[{}]---key={},value={:?}",
+                _i,
+                hex::encode(&unique_key),
+                signed_msg
+            );
             con.xadd("stream_storage", "*", &[(signed_msg.clone(), unique_key)])
                 .await?;
         }

@@ -47,9 +47,11 @@ pub mod shmem_impl {
         //-------------------------------------------------------------------
         //-------------------------------------------------------------------
         let (sender, receiver) = unbounded();
+        let (sender_val, receiver_val) = unbounded();
         let recv1: crossbeam_channel::Receiver<String> = receiver.clone();
+        let recv_val = receiver_val.clone();
         let handler = thread::spawn(move || {
-            process_in_wasm(recv1).unwrap();
+            process_in_wasm(recv1, recv_val).unwrap();
         });
 
         //-------------------------------------------------------------------
@@ -61,6 +63,7 @@ pub mod shmem_impl {
                 let data2: Vec<u8> = data.bytes2.to_vec();
                 //                 info!("readed key [{}], value [{}]", data1, data2);
                 sender.send(data1.to_owned()).unwrap(); // sending to wasm module
+                sender_val.send(data2.to_owned()).unwrap(); // sending to wasm module
                 ptr_cpy = ptr_cpy.add(sizeofstruct);
             }
         }
