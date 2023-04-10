@@ -29,8 +29,8 @@ use wasm_processor::implement::*;
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
+use base64::{engine::general_purpose, Engine as _};
 use crossbeam_channel::unbounded;
-
 use k256::schnorr::{
     signature::{Signer, Verifier},
     SigningKey, VerifyingKey,
@@ -80,14 +80,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .expect("wrong length"); // 32-bytes
             let unique_key: Vec<u8> = verifying_key_bytes.into();
             let msg = rng.generate_name();
-            let signed_msg = msg;
-            //             let signed_msg = signing_key.sign(msg).to_string();
+            //let msg = String::from("hehe");
+            let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign
+            let signed_msg = general_purpose::STANDARD.encode(&signatured_msg); // encode b64
             println!(
-                "---[{}]---key={},value={:?}",
+                "---[{}]---key={},S_MESSAGE={:?}",
                 _i,
-                hex::encode(&unique_key),
-                signed_msg
+                hex::encode(&unique_key), //ver key
+                signed_msg                // msg signed
             );
+            /*println!(
+                "ENCODED: MSG {} V_KEY:{}",
+                hex::encode(&signed_msg),
+                hex::encode(&unique_key)
+            );*/
+
             con.xadd("stream_storage", "*", &[(signed_msg.clone(), unique_key)])
                 .await?;
         }

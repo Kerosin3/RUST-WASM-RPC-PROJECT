@@ -1,4 +1,5 @@
 pub mod memoryprocessor {
+    use base64::{engine::general_purpose, Engine as _};
     use hex::encode;
     use k256::schnorr::{
         signature::{Signer, Verifier},

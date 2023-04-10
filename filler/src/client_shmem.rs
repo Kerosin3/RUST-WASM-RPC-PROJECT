@@ -46,10 +46,10 @@ pub mod shmem_impl {
         let sizeofstruct = bincode::serialized_size(&buf_struct).unwrap() as usize;
         //-------------------------------------------------------------------
         //-------------------------------------------------------------------
-        let (sender, receiver) = unbounded();
-        let (sender_val, receiver_val) = unbounded();
-        let recv1: crossbeam_channel::Receiver<String> = receiver.clone();
-        let recv_val = receiver_val.clone();
+        let (sender_signed_msg, receiver_signed_msg) = unbounded();
+        let (sender_ver_key, receiver_ver_key) = unbounded();
+        let recv1: crossbeam_channel::Receiver<String> = receiver_signed_msg.clone();
+        let recv_val = receiver_ver_key.clone();
         let handler = thread::spawn(move || {
             process_in_wasm(recv1, recv_val).unwrap();
         });
@@ -62,8 +62,8 @@ pub mod shmem_impl {
                 let data1 = std::str::from_utf8(&data.bytes1).unwrap();
                 let data2: Vec<u8> = data.bytes2.to_vec();
                 //                 info!("readed key [{}], value [{}]", data1, data2);
-                sender.send(data1.to_owned()).unwrap(); // sending to wasm module
-                sender_val.send(data2.to_owned()).unwrap(); // sending to wasm module
+                sender_signed_msg.send(data1.to_owned()).unwrap(); // sending to wasm module
+                sender_ver_key.send(data2.to_owned()).unwrap(); // sending to wasm module
                 ptr_cpy = ptr_cpy.add(sizeofstruct);
             }
         }

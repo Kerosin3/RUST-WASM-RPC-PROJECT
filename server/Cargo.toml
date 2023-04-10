@@ -33,6 +33,7 @@ serde_with = "2.3.2"
 shmem-structs = {path="../shmem-structs"}
 hex = "0.4.3"
 k256 = {version = "0.13.1", default-features=false,features = ["ecdsa","sha256","schnorr"]}
+base64 = "0.21.0"
 [build-dependencies]
 tonic-build = "0.8.3"
 prost-build = "0.11.8"
