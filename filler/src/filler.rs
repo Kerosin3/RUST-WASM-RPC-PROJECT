@@ -33,7 +33,7 @@ use base64::{engine::general_purpose, Engine as _};
 use crossbeam_channel::unbounded;
 use k256::schnorr::{
     signature::{Signer, Verifier},
-    SigningKey, VerifyingKey,
+    Signature, SignatureBytes, SigningKey, VerifyingKey,
 };
 use rand_core::OsRng;
 //-------------------------------------------------------
@@ -71,21 +71,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let rng = RNG::try_from(&Language::Roman).unwrap();
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let signing_key = SigningKey::random(&mut OsRng); // serialize with `.to_bytes()`
+            let signing_key = SigningKey::random(&mut OsRng); // generate sign key
             let verifying_key_bytes: [u8; 32] = signing_key
                 .verifying_key()
                 .to_bytes()
                 .as_slice()
                 .try_into()
-                .expect("wrong length"); // 32-bytes
-            let unique_key: Vec<u8> = verifying_key_bytes.into();
+                .expect("wrong length"); // 32-bytes VERIFY KEY
+            let unique_key: Vec<u8> = verifying_key_bytes.into(); // verify key to vec
             let msg = rng.generate_name();
             //let msg = String::from("hehe");
-            let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign
-            let signed_msg = hex::encode(&signatured_msg);
+            let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
+            let signed_msg = hex::encode(&signatured_msg); // encode signed
+                                                           //-----
+                                                           //  println!("size is {}", signed_msg.len());
+            let restored_signed_message = hex::decode(&signed_msg).unwrap(); // decode S msg back
+            let x = Signature::try_from(&restored_signed_message[..]).unwrap();
 
-            println!("size is {}", signed_msg.len());
-            let restored_signed_message = hex::decode(&signed_msg).unwrap();
+            let ver_key = VerifyingKey::from_bytes(&verifying_key_bytes).unwrap(); // restore v key
+            assert!(ver_key.verify(msg.as_bytes(), &x).is_ok());
             //let signed_msg = general_purpose::STANDARD_NO_PAD.encode(&signatured_msg); // encode b64
             println!(
                 "---[{}]---key={},S_MESSAGE={:?}",
