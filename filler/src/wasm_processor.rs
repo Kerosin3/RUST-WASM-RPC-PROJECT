@@ -36,7 +36,8 @@ pub mod implement {
         let host = HostProvider::assign(engine).unwrap();
         let now = Instant::now();
         for _i in 0..MESSAGES_NUMBER {
-            let s_msg = store_signed_msg.pop().unwrap();
+            let mut s_msg = store_signed_msg.pop().unwrap();
+            s_msg.truncate(128); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
             ver_key.truncate(SIGN_SIZE);
             let restored_ver_key = VerifyingKey::from_bytes(&ver_key).unwrap(); // RESTORE KEY
@@ -45,10 +46,11 @@ pub mod implement {
                 &s_msg,
                 hex::encode(ver_key)
             );
-            let restored_signed_message = general_purpose::STANDARD.decode(&s_msg).unwrap();
-            //             let signed_msg_r: Signature =
-            //                 unsafe { std::ptr::read(restored_signed_message.as_ptr() as *const _) };
-            //             assert!(restored_ver_key.verify(b"haha", &signed_msg_r).is_ok());
+            let restored_signed_message = hex::decode(&s_msg).unwrap();
+            //let restored_signed_message = general_purpose::STANDARD_NO_PAD.decode(&s_msg).unwrap();
+            //let signed_msg_r: Signature =
+            //    unsafe { std::ptr::read(restored_signed_message.as_ptr() as *const _) };
+            //assert!(restored_ver_key.verify(b"haha", &signed_msg_r).is_ok());
             /*            println!(
                 "=====>DECODED: MSG {:?} V_KEY:{:?}",
                 restored_value, restored_ver_key

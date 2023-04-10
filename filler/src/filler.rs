@@ -82,7 +82,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let msg = rng.generate_name();
             //let msg = String::from("hehe");
             let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign
-            let signed_msg = general_purpose::STANDARD.encode(&signatured_msg); // encode b64
+            let signed_msg = hex::encode(&signatured_msg);
+
+            println!("size is {}", signed_msg.len());
+            let restored_signed_message = hex::decode(&signed_msg).unwrap();
+            //let signed_msg = general_purpose::STANDARD_NO_PAD.encode(&signatured_msg); // encode b64
             println!(
                 "---[{}]---key={},S_MESSAGE={:?}",
                 _i,
