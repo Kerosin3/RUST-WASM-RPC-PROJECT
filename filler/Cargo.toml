@@ -37,6 +37,7 @@ hex = "0.4.3"
 crossbeam = {version = "0.8.2"}
 crossbeam-channel = "0.5.7"
 crossbeam-queue = "0.3.8"
-
+k256 = {version = "0.13.1", default-features=false,features = ["ecdsa","sha256","schnorr"]}
+rand_core = {version = "0.6.4", features = ["getrandom"]}
 [build-dependencies]
 tonic-build = "0.8.3"

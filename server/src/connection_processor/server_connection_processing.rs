@@ -5,6 +5,7 @@ pub mod Implement {
     //----------------------------------------------------------------//
     use crate::connection_processor::shmem_server::memoryprocessor::*;
     use anyhow::Result;
+    use hex::encode;
     use libshmem::datastructs::MESSAGES_NUMBER;
     use redis::streams::*;
     use redis::{
@@ -65,12 +66,14 @@ pub mod Implement {
                         if let Some(reply) = result {
                             let mut j: u32 = 0;
                             for stream_id in reply.ids {
-                                //        println!("deleting {} {}", "my_stream", stream_id.id);
-                                //      println!("->> xrevrange stream entity: {}  ", stream_id.id);
                                 for (name, value) in stream_id.map.iter() {
-                                    let val = from_redis_value::<String>(value).unwrap();
-
-                                    tracing::info!("deleting: [serial:{}  {}: {}]", j, name, val);
+                                    let val = from_redis_value::<Vec<u8>>(value).unwrap();
+                                    tracing::info!(
+                                        "deleting: [serial:{}  {}: {}]",
+                                        j,
+                                        name,
+                                        encode(&val)
+                                    );
                                     fill_sh_memory(name.to_string(), val, j);
                                     j += 1;
                                 }

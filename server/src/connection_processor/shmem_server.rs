@@ -1,4 +1,5 @@
 pub mod memoryprocessor {
+    use hex::encode;
     use libshmem::datastructs::*;
     use rnglib::{Language, RNG};
     use serde::{Deserialize, Serialize};
@@ -9,7 +10,7 @@ pub mod memoryprocessor {
     use std::mem;
     use std::path::Path;
     // WRITE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    pub fn fill_sh_memory(key: String, value: String, serial_msg: u32) {
+    pub fn fill_sh_memory(key: String, value: Vec<u8>, serial_msg: u32) {
         let root_path = project_root::get_project_root().unwrap();
         let shmem_flink = Path::new(&root_path).join(MEMFILE);
         let memsize: usize = MEMSIZE;
@@ -37,7 +38,7 @@ pub mod memoryprocessor {
         tracing::info!(
             "processing key {}, value {}, serial: {}",
             key,
-            value,
+            encode(&value),
             serial_msg
         );
         unsafe {

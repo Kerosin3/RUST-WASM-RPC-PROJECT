@@ -30,6 +30,12 @@ pub mod transport {
     tonic::include_proto!("transport_interface");
 }
 use crossbeam_channel::unbounded;
+
+use k256::schnorr::{
+    signature::{Signer, Verifier},
+    SigningKey, VerifyingKey,
+};
+use rand_core::OsRng;
 //-------------------------------------------------------
 //-------------------------------------------------------
 //-------------------------------------------------------
@@ -65,10 +71,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let rng = RNG::try_from(&Language::Roman).unwrap();
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let unique_key = generate(KEY_LEN, charset);
+            let signing_key = SigningKey::random(&mut OsRng); // serialize with `.to_bytes()`
+            let verifying_key_bytes: [u8; 32] = signing_key
+                .verifying_key()
+                .to_bytes()
+                .as_slice()
+                .try_into()
+                .expect("wrong length"); // 32-bytes
+
+            //             let unique_key = verifying_key_bytes;
+            //let unique_key = generate(KEY_LEN, charset);
+            let unique_key: Vec<u8> = verifying_key_bytes.into();
+            //             let unique_key = unsafe { std::str::from_utf8_unchecked(&unique_key) };
+            //             println!("key: {:?}", unique_key);
             let msg = rng.generate_name();
-            info!("---[{}]---key={},value={}", _i, unique_key, msg);
-            con.xadd("stream_storage", "*", &[(unique_key, msg.clone())])
+            info!("---[{}]---key={:?},value={}", _i, unique_key, msg);
+            con.xadd("stream_storage", "*", &[(msg.clone(), unique_key)])
                 .await?;
         }
         // send answers OK

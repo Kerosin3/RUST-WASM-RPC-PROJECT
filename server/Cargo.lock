@@ -1603,6 +1603,7 @@ dependencies = [
  "anyhow",
  "bincode",
  "futures",
+ "hex",
  "mockall",
  "num",
  "project-root",
