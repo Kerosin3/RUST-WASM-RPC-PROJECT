@@ -1,5 +1,9 @@
 pub mod memoryprocessor {
     use hex::encode;
+    use k256::schnorr::{
+        signature::{Signer, Verifier},
+        SigningKey, VerifyingKey,
+    };
     use libshmem::datastructs::*;
     use rnglib::{Language, RNG};
     use serde::{Deserialize, Serialize};

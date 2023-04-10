@@ -78,15 +78,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .as_slice()
                 .try_into()
                 .expect("wrong length"); // 32-bytes
-
-            //             let unique_key = verifying_key_bytes;
-            //let unique_key = generate(KEY_LEN, charset);
             let unique_key: Vec<u8> = verifying_key_bytes.into();
-            //             let unique_key = unsafe { std::str::from_utf8_unchecked(&unique_key) };
-            //             println!("key: {:?}", unique_key);
             let msg = rng.generate_name();
-            info!("---[{}]---key={:?},value={}", _i, unique_key, msg);
-            con.xadd("stream_storage", "*", &[(msg.clone(), unique_key)])
+            let signed_msg = msg;
+            //             let signed_msg = signing_key.sign(msg).to_string();
+            info!("---[{}]---key={:?},value={:?}", _i, unique_key, signed_msg);
+            con.xadd("stream_storage", "*", &[(signed_msg.clone(), unique_key)])
                 .await?;
         }
         // send answers OK
