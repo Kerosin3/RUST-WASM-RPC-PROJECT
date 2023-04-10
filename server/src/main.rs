@@ -21,6 +21,7 @@ use redis::{
     AsyncCommands, Client,
 };
 use redis::{Commands, Connection, RedisResult, ToRedisArgs};
+use std::net::TcpStream;
 //main function
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -32,6 +33,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_max_level(Level::INFO)
         .finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+    if TcpStream::connect("127.0.0.1:6379").is_err() {
+        eprintln!("please start redis!");
+        panic!();
+    }
     let root_path = project_root::get_project_root().unwrap();
     let shmem_flink = Path::new(&root_path).join(MEMFILE);
     let _ = std::fs::remove_file(&shmem_flink);
