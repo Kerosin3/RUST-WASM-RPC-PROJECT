@@ -90,7 +90,10 @@ pub mod implement {
             //####################REPLACING MODULE#########################
             if _i == MESSAGES_NUMBER / 2 {
                 //replace module
-                println!("----replacing module---");
+                println!(
+                    "{}",
+                    red.apply_to("xxxxxxxxxxxxxxx----replacing module---xxxxxxxxxxxxxxx")
+                );
                 host.execute_replace_module(&module_bytes2).unwrap();
             }
             let result = host.execute_func_call(&func, &serbytes).unwrap();
