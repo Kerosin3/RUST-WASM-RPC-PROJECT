@@ -29,4 +29,16 @@ pub mod serdes {
     pub struct StructRecv {
         pub payload_back: String,
     }
+    #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+    pub struct WasmDataSend {
+        pub rmessage: String,
+        pub smessage: String,
+        pub vkey: Vec<u8>,
+        pub id: i32,
+        pub oper: Operation,
+    }
+    #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+    pub struct WasmDataRecv {
+        pub payload_back: String,
+    }
 }

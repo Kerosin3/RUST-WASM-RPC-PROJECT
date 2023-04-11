@@ -31,7 +31,7 @@ pub mod implement {
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("debug")
-            .join("module3_hash.wasm");
+            .join("module4_verify.wasm");
         let module_bytes1 = std::fs::read(module1)
             .expect("WASM module 1 could not be read, run example from wasmtime-provider folder"); // read module 1
         let func = "serdes_example".to_string();
@@ -41,6 +41,7 @@ pub mod implement {
         //         let n_msg = right_messages.into_iter();
         for _i in 0..MESSAGES_NUMBER {
             let mut s_msg = store_signed_msg.pop().unwrap();
+            //             s_msg.replace_range(0..1, "x");
             s_msg.truncate(128); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
             ver_key.truncate(SIGN_SIZE);
@@ -49,14 +50,16 @@ pub mod implement {
                 &s_msg,
                 hex::encode(&ver_key)
             );
-            let _validity =
-                test_validity(&ver_key, &s_msg, right_messages.pop().unwrap().as_str()).unwrap();
-            let person = StructSend {
-                payload: s_msg.clone(),
-                id: 0,
-                oper: Operation::Two,
+            let rmsg = right_messages.pop().unwrap().as_str().to_string();
+            //             let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap();
+            let data_to_wasm = WasmDataSend {
+                rmessage: rmsg.to_string(),
+                vkey: ver_key,
+                smessage: s_msg.to_owned(),
+                id: _i as i32,
+                oper: Operation::One,
             };
-            let serbytes: Vec<u8> = serialize(&person).unwrap(); // serialize
+            let serbytes: Vec<u8> = serialize(&data_to_wasm).unwrap(); // serialize
             println!("calling wasm guest function to process text [{}]", s_msg);
             println!("---------------CALLING MAIN MODULE------------------");
             let result = host.execute_func_call(&func, &serbytes).unwrap();

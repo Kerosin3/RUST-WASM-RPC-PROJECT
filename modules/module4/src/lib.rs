@@ -1,10 +1,11 @@
 #![allow(unused_imports)]
 // use inteconnet::serdes::*;
+
 use k256::schnorr::{
     signature::{Signer, Verifier},
-    SigningKey, VerifyingKey,
+    Signature, SigningKey, VerifyingKey,
 };
-use rand_core::OsRng; // requires 'getrandom' featureuse libinteronnect::serdes::*;
+use libinteronnect::serdes::*;
 use serde::{Deserialize, Serialize};
 use wapc_codec::messagepack::{deserialize, serialize};
 use wapc_guest as wapc;
@@ -15,17 +16,37 @@ pub fn wapc_init() {
 //just return hardcoded
 fn serdes_example(msg: &[u8]) -> wapc::CallResult {
     wapc::console_log(&String::from(
-        "IN_WASM: Received request for `serdes_and_hash`: MODULE 3",
+        "IN_WASM: Received request for `serdes_and_hash`: MODULE 4",
     ));
-    let inputstruct: StructSend = deserialize(msg)?; // deser Name
+    let inputstruct: WasmDataSend = deserialize(msg)?; // deser Name
+    let msg_back = StructRecv {
+        payload_back: "default".to_string(),
+    };
     match inputstruct.oper {
         Operation::One => {
-            let msg_back = StructRecv {
-                payload_back: "Heheh".to_string(),
-            };
-            let bytes = serialize(&msg_back)?;
-            let _res = wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
-            Ok(bytes.to_vec())
+            let encoded_signed_msg = inputstruct.smessage;
+            let encoded_vkey = inputstruct.vkey;
+            let _testmessage = inputstruct.rmessage;
+            let restored_signed_message = hex::decode(&encoded_signed_msg).unwrap();
+            let restored_signed_message = Signature::try_from(&restored_signed_message[..]);
+            let ver_key = VerifyingKey::from_bytes(&encoded_vkey).unwrap();
+            if ver_key
+                .verify(_testmessage.as_bytes(), &restored_signed_message)
+                .is_ok()
+            {
+                let msg_back = StructRecv {
+                    payload_back: "OK".to_string(),
+                };
+                let bytes = serialize(&msg_back)?;
+                let _res =
+                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                Ok(bytes.to_vec())
+            } else {
+                let bytes = serialize(&msg_back)?;
+                let _res =
+                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                Ok(bytes.to_vec())
+            }
         }
         _ => {
             let msg_back = StructRecv {
