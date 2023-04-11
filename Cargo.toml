@@ -11,7 +11,7 @@ members = [
 exclude = ["./test_systemd","./filler","./server","module3_bkp","/proc2"]
 [profile.release]
 panic = 'abort'
-codegen-units = 1
+codegen-units = 16
 opt-level = 'z'
 lto = true
 strip = "debuginfo"
