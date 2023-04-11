@@ -24,7 +24,7 @@ pub mod implement {
     use console::Style;
 
     use crate::native_verification;
-    pub fn process_in_wasmtime(
+    pub fn process_in_wasmtime_with_replacing(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
         right_messages: Vec<String>,
@@ -41,7 +41,7 @@ pub mod implement {
         }
         println!(
             "{}",
-            red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER")
+            red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER WITH REPLACE")
         );
         let root_path = project_root::get_project_root().unwrap();
         let module1 = Path::new(&root_path)
@@ -49,7 +49,14 @@ pub mod implement {
             .join("wasm32-unknown-unknown")
             .join("release")
             .join("module4_verify.wasm");
-        let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
+        let module_bytes1 = std::fs::read(module1).expect("WASM module 1 could not be read "); // read module 1
+        let module2 = Path::new(&root_path)
+            .join("target")
+            .join("wasm32-unknown-unknown")
+            .join("release")
+            .join("module5_verify.wasm");
+        let module_bytes2 = std::fs::read(module2).expect("WASM module 2 could not be read"); // read module 2
+
         let func = FUNC_WASM_NAME;
         let engine = Engine::new(module_bytes1); // load engine
         let host = HostProvider::assign(engine).unwrap();
@@ -71,12 +78,6 @@ pub mod implement {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &rmsg
             );
-            /*
-            if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
-                valid_n += 1;
-            }*/
-            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
-
             let data_to_wasm = WasmDataSend {
                 rmessage: rmsg.to_string(),
                 vkey: ver_key,
@@ -86,6 +87,12 @@ pub mod implement {
             };
             let serbytes: Vec<u8> = serialize(&data_to_wasm).unwrap(); // serialize
             println!("{}", yellow.apply_to("CALLING WASM MODULE"));
+            //####################REPLACING MODULE#########################
+            if _i == MESSAGES_NUMBER / 2 {
+                //replace module
+                println!("----replacing module---");
+                host.execute_replace_module(&module_bytes2).unwrap();
+            }
             let result = host.execute_func_call(&func, &serbytes).unwrap();
             let recv_struct: WasmDataRecv = deserialize(&result).unwrap();
             let whether_valid = recv_struct.status;

@@ -51,8 +51,7 @@ pub mod implement_wasm3 {
             .join("wasm32-unknown-unknown")
             .join("release")
             .join("module4_verify.wasm");
-        let module_bytes1 = std::fs::read(module1)
-            .expect("WASM module 1 could not be read, run example from wasmtime-provider folder"); // read module 1
+        let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
         let func = FUNC_WASM_NAME;
         let engine = Wasm3EngineProvider::new(&module_bytes1);
         let host = WapcHost::new(Box::new(engine), Some(Box::new(host_callback)))?;

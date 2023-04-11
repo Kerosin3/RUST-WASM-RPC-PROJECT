@@ -19,8 +19,8 @@ pub mod wasm_lib {
         pub fn execute_func_call(&self, func_name: &str, ser_data: &[u8]) -> Result<Vec<u8>> {
             Ok(self.host.call(func_name, ser_data)?)
         }
-        pub fn execute_replace_module(&self, mod_bytes: Vec<u8>) -> Result<()> {
-            self.host.replace_module(&mod_bytes)?;
+        pub fn execute_replace_module(&self, mod_bytes: &Vec<u8>) -> Result<()> {
+            self.host.replace_module(mod_bytes)?;
             Ok(())
         }
     }

@@ -25,6 +25,7 @@ use redis::{
 use transport::transport_interface_client::TransportInterfaceClient;
 use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
 mod wasm_processor_wasmtime;
+mod wasm_processor_wasmtime_module_replace;
 use wasm_processor_wasmtime::implement::*;
 mod wasm_processor_native;
 use wasm_processor_native::implement_native::*;
@@ -56,6 +57,7 @@ pub enum Runner {
     Wasmtime,
     Wasm3,
     Native,
+    Replace,
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -65,6 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         0 => Runner::Wasmtime,
         1 => Runner::Wasm3,
         2 => Runner::Native,
+        3 => Runner::Replace,
         _ => Runner::Native,
     };
     env_logger::init();
