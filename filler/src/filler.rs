@@ -15,7 +15,9 @@ extern crate hex_slice;
 use log::*;
 mod client_shmem;
 use client_shmem::shmem_impl::*;
+mod native_verification;
 use libshmem::datastructs::*;
+use native_verification::implement::*;
 use random_string::generate;
 use redis::{
     from_redis_value,
