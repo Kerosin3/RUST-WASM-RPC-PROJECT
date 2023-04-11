@@ -20,53 +20,56 @@ fn serdes_example(msg: &[u8]) -> wapc::CallResult {
         "IN_WASM: Received request for `serdes_and_hash`: MODULE 4",
     ));
     let inputstruct: WasmDataSend = deserialize(msg)?; // deser Name
-    let bad_msg = StructRecv {
+    let bad_msg = WasmDataRecv {
         payload_back: "Error".to_string(),
+        status: StatusFromWasm::Error,
     };
     let bytes_bad = serialize(&bad_msg)?;
-    let msg_back = StructRecv {
-        payload_back: "default".to_string(),
-    };
 
     match inputstruct.oper {
         Operation::One => {
             let encoded_signed_msg = inputstruct.smessage;
             let encoded_vkey = inputstruct.vkey;
             let _testmessage = inputstruct.rmessage;
+            wapc::console_log(&format!(
+                "\nsmessage passed to wasm\n[{}]\nvkey:\n[{}]\nmessage:[{}]\n",
+                &encoded_signed_msg,
+                hex::encode(&encoded_vkey),
+                &_testmessage
+            ));
 
-            if hex::decode(&encoded_signed_msg).is_err() {
+            let Ok(restored_signed_message) = hex::decode(&encoded_signed_msg) else {
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
-            }
-            //decode gonna be ok
-            let restored_signed_message = hex::decode(&encoded_signed_msg).unwrap();
-
-            if Signature::try_from(&restored_signed_message[..]).is_err() {
+            };
+            let Ok(restored_signed_message) = Signature::try_from(&restored_signed_message[..]) else {
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
-            }
-            let restored_signed_message =
-                Signature::try_from(&restored_signed_message[..]).unwrap();
-            if VerifyingKey::from_bytes(&encoded_vkey).is_err() {
+            };
+            let Ok(ver_key ) = VerifyingKey::from_bytes(&encoded_vkey) else {
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
-            }
-            let ver_key = VerifyingKey::from_bytes(&encoded_vkey).unwrap();
+            };
             if ver_key
                 .verify(_testmessage.as_bytes(), &restored_signed_message)
                 .is_ok()
             {
-                let msg_back = StructRecv {
-                    payload_back: "OK".to_string(),
+                let msg_back = WasmDataRecv {
+                    payload_back: "Ok".to_string(),
+                    status: StatusFromWasm::Valid,
                 };
                 let bytes = serialize(&msg_back)?;
                 let _res =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
                 Ok(bytes.to_vec())
             } else {
+                let msg_back = WasmDataRecv {
+                    payload_back: "Ok".to_string(),
+                    status: StatusFromWasm::NotValid,
+                };
                 let bytes = serialize(&msg_back)?;
                 let _res =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
@@ -74,8 +77,9 @@ fn serdes_example(msg: &[u8]) -> wapc::CallResult {
             }
         }
         _ => {
-            let msg_back = StructRecv {
+            let msg_back = WasmDataRecv {
                 payload_back: "11111".to_string(),
+                status: StatusFromWasm::Error,
             };
             let bytes = serialize(&msg_back)?;
             let _res = wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;

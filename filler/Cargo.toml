@@ -40,5 +40,6 @@ crossbeam-queue = "0.3.8"
 k256 = {version = "0.13.1", default-features=false,features = ["ecdsa","sha256","schnorr"]}
 rand_core = {version = "0.6.4", features = ["getrandom"]}
 base64 = "0.21.0"
+console = "0.15.5"
 [build-dependencies]
 tonic-build = "0.8.3"

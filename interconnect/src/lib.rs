@@ -40,5 +40,12 @@ pub mod serdes {
     #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
     pub struct WasmDataRecv {
         pub payload_back: String,
+        pub status: StatusFromWasm,
+    }
+    #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+    pub enum StatusFromWasm {
+        Valid,
+        NotValid,
+        Error,
     }
 }
