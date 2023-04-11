@@ -33,6 +33,7 @@ wapc-codec = {path = "../wasm-core/wapc-codec"}
 wapc = {path = "../wasm-core/wapc"}
 interconnect = {path= "../interconnect"}
 wasmtime_runner = {path = "../wasm-core/wasmtime_runner"}
+wasm3_runner = {path = "../wasm-core/wasm3_runner"}
 hex = "0.4.3"
 crossbeam = {version = "0.8.2"}
 crossbeam-channel = "0.5.7"
