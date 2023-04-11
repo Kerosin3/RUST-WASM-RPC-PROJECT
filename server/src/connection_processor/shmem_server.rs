@@ -44,7 +44,7 @@ pub mod memoryprocessor {
             "processing key {}, value {}, serial: {}",
             key,
             encode(&value),
-            serial_msg
+            serial_msg,
         );
         unsafe {
             let (ptr, len, cap) = key.into_raw_parts();

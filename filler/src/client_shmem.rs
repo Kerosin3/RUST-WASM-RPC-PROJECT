@@ -67,7 +67,11 @@ pub mod shmem_impl {
         }
         warn!("read complete!");
         unsafe {
-            *shmem.as_ptr() = 0;
+            let mut beg_m = shmem.as_ptr();
+            *beg_m = 0; //flag
+            beg_m = beg_m.add(1); // added one byte to pointer
+            let n_msg_as_bytes: [u8; mem::size_of::<u32>()] = 0_u32.to_ne_bytes();
+            std::ptr::copy(n_msg_as_bytes.as_ptr(), beg_m, mem::size_of::<u32>());
         }
         warn!("clear write ready flag");
         handler.join().unwrap();
