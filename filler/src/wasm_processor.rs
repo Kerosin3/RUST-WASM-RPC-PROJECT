@@ -41,7 +41,7 @@ pub mod implement {
         //         let n_msg = right_messages.into_iter();
         for _i in 0..MESSAGES_NUMBER {
             let mut s_msg = store_signed_msg.pop().unwrap();
-            //             s_msg.replace_range(0..1, "x");
+            s_msg.replace_range(0..1, "x"); // error handling
             s_msg.truncate(128); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
             ver_key.truncate(SIGN_SIZE);
