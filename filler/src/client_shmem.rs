@@ -1,11 +1,12 @@
 pub mod shmem_impl {
-
-    use crate::wasm_processor::implement::*;
+    use crate::wasm_processor_native::implement_native::process_native;
+    use crate::wasm_processor_wasm3::implement_wasm3::*;
+    use crate::wasm_processor_wasmtime::implement::*;
+    use crate::Runner;
+    use console::Style;
     use crossbeam_channel::unbounded;
-    use crossbeam_queue::ArrayQueue;
     use libshmem::datastructs::*;
     use log::*;
-    use rnglib::{Language, RNG};
     use serde::{Deserialize, Serialize};
     use serde_with::serde_as;
     use serde_with::Bytes;
@@ -15,7 +16,7 @@ pub mod shmem_impl {
     use std::path::Path;
     use std::thread;
 
-    pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<String>) {
+    pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<String>, runner_type: Runner) {
         let root_path = project_root::get_project_root().unwrap();
         let shmem_flink = Path::new(&root_path).join("server").join(MEMFILE);
         info!("getted connected to shared memory file");
@@ -26,6 +27,7 @@ pub mod shmem_impl {
             .open()
             .unwrap();
 
+        let cyan = Style::new().cyan();
         let shm_ptr_beg = shmem.as_ptr();
         let mut ptr_cpy = shm_ptr_beg;
         unsafe {
@@ -50,8 +52,22 @@ pub mod shmem_impl {
         let (sender_ver_key, receiver_ver_key) = unbounded();
         let recv1: crossbeam_channel::Receiver<String> = receiver_signed_msg;
         let recv_val = receiver_ver_key;
-        let handler = thread::spawn(move || {
-            process_in_wasm(recv1, recv_val, recv_right_msg).unwrap();
+        let handler = thread::spawn(move || match runner_type {
+            Runner::Wasmtime => {
+                println!("{}", cyan.apply_to("RUNNING IN WASMTIME"));
+                thread::sleep(std::time::Duration::from_secs(1));
+                process_in_wasmtime(recv1, recv_val, recv_right_msg).unwrap();
+            }
+            Runner::Wasm3 => {
+                println!("{}", cyan.apply_to("RUNNING IN WASM3"));
+                thread::sleep(std::time::Duration::from_secs(1));
+                process_in_wasm3(recv1, recv_val, recv_right_msg).unwrap();
+            }
+            Runner::Native => {
+                println!("{}", cyan.apply_to("RUNNING NATIVELY"));
+                thread::sleep(std::time::Duration::from_secs(1));
+                process_native(recv1, recv_val, recv_right_msg).unwrap();
+            }
         });
         //-------------------------------------------------------------------
         unsafe {

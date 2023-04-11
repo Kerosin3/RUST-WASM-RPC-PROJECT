@@ -2,7 +2,7 @@
 //#######################################################
 //#######################################################
 //#######################################################
-const KEY_LEN: usize = 10;
+// const KEY_LEN: usize = 10;
 const _VAL_LEN: usize = 10;
 const EXTRA_PRINT: bool = true;
 //#######################################################
@@ -10,29 +10,29 @@ const EXTRA_PRINT: bool = true;
 //#######################################################
 //-------------------------------------------------------
 //-------------------------------------------------------
-use std::io::stdin;
-extern crate hex_slice;
 use log::*;
+use std::io::stdin;
 mod client_shmem;
 use client_shmem::shmem_impl::*;
 mod native_verification;
 use libshmem::datastructs::*;
 use native_verification::implement::*;
-use random_string::generate;
 use redis::{
     from_redis_value,
     streams::{StreamRangeReply, StreamReadOptions, StreamReadReply},
     AsyncCommands, Client,
 };
-use rnglib::{Language, RNG};
 use transport::transport_interface_client::TransportInterfaceClient;
 use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
-mod wasm_processor;
-use wasm_processor::implement::*;
+mod wasm_processor_wasmtime;
+use wasm_processor_wasmtime::implement::*;
+mod wasm_processor_native;
+use wasm_processor_native::implement_native::*;
+mod wasm_processor_wasm3;
+use wasm_processor_wasm3::implement_wasm3::*;
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
-use base64::{engine::general_purpose, Engine as _};
 use console::Style;
 use crossbeam_channel::unbounded;
 use k256::schnorr::{
@@ -40,11 +40,33 @@ use k256::schnorr::{
     Signature, SignatureBytes, SigningKey, VerifyingKey,
 };
 use rand_core::OsRng;
+use rnglib::{Language, RNG};
+use std::path::PathBuf;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+struct Opt {
+    #[structopt(short = "r", long = "runner")]
+    runner: u32,
+}
 //-------------------------------------------------------
 //-------------------------------------------------------
 //-------------------------------------------------------
+pub enum Runner {
+    Wasmtime,
+    Wasm3,
+    Native,
+}
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let opt = Opt::from_args();
+    println!("{:?}", opt);
+    let opt = match opt.runner {
+        0 => Runner::Wasmtime,
+        1 => Runner::Wasm3,
+        2 => Runner::Native,
+        _ => Runner::Native,
+    };
     env_logger::init();
     let cyan = Style::new().cyan();
     info!("starting client app");
@@ -118,7 +140,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     info!("waiting messages to complite write to shared memory");
     //------------------------------------------------------
-    read_shmem(MESSAGES_NUMBER, right_messages);
+    read_shmem(MESSAGES_NUMBER, right_messages, opt);
     //------------------------------------------------------
     Ok(())
 }

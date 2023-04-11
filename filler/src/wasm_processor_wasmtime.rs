@@ -8,7 +8,6 @@ pub mod implement {
     //################################################3
     //################################################3
     use crate::native_verification::implement::*;
-    use base64::{engine::general_purpose, Engine as _};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
         signature::{Signer, Verifier},
@@ -25,7 +24,7 @@ pub mod implement {
     use console::Style;
 
     use crate::native_verification;
-    pub fn process_in_wasm(
+    pub fn process_in_wasmtime(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
         right_messages: Vec<String>,
@@ -73,12 +72,12 @@ pub mod implement {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &rmsg
             );
-
+            /*
             if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
                 valid_n += 1;
-            }
+            }*/
             //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
-            /*
+
             let data_to_wasm = WasmDataSend {
                 rmessage: rmsg.to_string(),
                 vkey: ver_key,
@@ -94,7 +93,7 @@ pub mod implement {
             println!("Valivation from WASM: {:?}", whether_valid);
             if whether_valid == StatusFromWasm::Valid {
                 valid_n += 1;
-            }*/
+            }
         }
         let elapsed = now.elapsed();
         println!(
@@ -104,7 +103,7 @@ pub mod implement {
         println!("Elapsed: >>>>{:.2?}<<<<", elapsed);
         Ok(())
     }
-
+    #[allow(dead_code)]
     fn test_validity(
         encoded_vkey: &[u8],
         encoded_signed_msg: &str,

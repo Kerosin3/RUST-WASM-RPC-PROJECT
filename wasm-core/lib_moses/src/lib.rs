@@ -40,7 +40,7 @@ pub mod wasm_lib {
             }
         }
     }
-    fn host_callback(
+    pub fn host_callback(
         id: u64,
         bd: &str,
         ns: &str,

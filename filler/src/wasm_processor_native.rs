@@ -1,0 +1,100 @@
+pub mod implement_native {
+    //################################################3
+    //################################################3
+    //################################################3
+    const MSG_LIMIT: usize = 128;
+    //################################################3
+    //################################################3
+    //################################################3
+    use crate::native_verification::implement::*;
+    use console::Style;
+    use crossbeam_channel::unbounded;
+    use k256::schnorr::{
+        signature::{Signer, Verifier},
+        Signature, SigningKey, VerifyingKey,
+    };
+    use libinteronnect::serdes::*;
+    use libmoses::wasm_lib::host_callback;
+    use libshmem::datastructs::*;
+    use std::io::{Error, ErrorKind};
+    use std::path::Path;
+    use std::time::Instant;
+    use wapc::WapcHost;
+    use wapc_codec::messagepack::{deserialize, serialize};
+    use wasm3_runner::*;
+
+    use crate::native_verification;
+
+    pub fn process_native(
+        recv_sig_msg: crossbeam_channel::Receiver<String>,
+        recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
+        right_messages: Vec<String>,
+    ) -> Result<(), wapc::errors::Error> {
+        let yellow = Style::new().yellow();
+        let magenta = Style::new().magenta();
+        let red = Style::new().red();
+        let mut right_messages: Vec<String> = right_messages.into_iter().rev().collect(); // overkill
+        let mut store_signed_msg: Vec<String> = vec![];
+        let mut store_ver_keys: Vec<Vec<u8>> = vec![];
+        for _ms in 0..MESSAGES_NUMBER {
+            store_signed_msg.push(recv_sig_msg.recv().unwrap()); //values
+            store_ver_keys.push(recv_ver_key.recv().unwrap()); // keys
+        }
+        println!(
+            "{}",
+            red.apply_to("START WASM PROCESSING USING NATIVE PLATFORM")
+        );
+        let now = Instant::now();
+        let mut valid_n: usize = 0;
+        for _i in 0..MESSAGES_NUMBER {
+            let mut s_msg = store_signed_msg.pop().unwrap();
+            /*if _i == 1 {
+                s_msg.replace_range(0..1, "x"); // error handling
+            }*/
+            s_msg.truncate(MSG_LIMIT); // oh shi
+            let mut ver_key = store_ver_keys.pop().unwrap();
+            ver_key.truncate(SIGN_SIZE);
+            let rmsg = right_messages.pop().unwrap().as_str().to_string();
+            println!(
+                "[{}]\nsigned message is [{}]\nver key is {}\nmessage:{}",
+                _i,
+                yellow.apply_to(&s_msg),
+                magenta.apply_to(hex::encode(&ver_key)),
+                &rmsg
+            );
+            if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
+                valid_n += 1;
+            }
+            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
+        }
+        let elapsed = now.elapsed();
+        println!(
+            "valid messages {}, total processed messages: {}",
+            valid_n, MESSAGES_NUMBER
+        );
+        println!("Elapsed: >>>>{:.2?}<<<<", elapsed);
+        Ok(())
+    }
+    #[allow(dead_code)]
+    fn test_validity(
+        encoded_vkey: &[u8],
+        encoded_signed_msg: &str,
+        _testmessage: &str,
+    ) -> Result<(), std::io::Error> {
+        println!("message is {}", _testmessage);
+        //----restore signe msg (to Signature)
+        let restored_signed_message = hex::decode(encoded_signed_msg).unwrap();
+        let restored_signed_message = Signature::try_from(&restored_signed_message[..]).unwrap();
+        // restore verification key
+        let ver_key = VerifyingKey::from_bytes(encoded_vkey).unwrap();
+        if ver_key
+            .verify(_testmessage.as_bytes(), &restored_signed_message)
+            .is_ok()
+        {
+            println!("PASSED!");
+            Ok(())
+        } else {
+            Err(Error::new(ErrorKind::Other, "verification failed"))
+        }
+    }
+}
