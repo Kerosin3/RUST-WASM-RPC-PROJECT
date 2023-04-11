@@ -11,13 +11,13 @@ use wapc_codec::messagepack::{deserialize, serialize};
 use wapc_guest as wapc;
 #[no_mangle]
 pub fn wapc_init() {
-    wapc::register_function("serdes_example", serdes_example);
+    wapc::register_function("verify_message", verify_message);
 }
 
 //just return hardcoded
-fn serdes_example(msg: &[u8]) -> wapc::CallResult {
+fn verify_message(msg: &[u8]) -> wapc::CallResult {
     wapc::console_log(&String::from(
-        "IN_WASM: Received request for `serdes_and_hash`: MODULE 4",
+        "IN_WASM: Received request for `verify_message`: MODULE 4",
     ));
     let inputstruct: WasmDataSend = deserialize(msg)?; // deser Name
     let bad_msg = WasmDataRecv {

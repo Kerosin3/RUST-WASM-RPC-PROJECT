@@ -1,4 +1,12 @@
 pub mod implement {
+    //################################################3
+    //################################################3
+    //################################################3
+    const FUNC_WASM_NAME: &str = "verify_message";
+    const MSG_LIMIT: usize = 128;
+    //################################################3
+    //################################################3
+    //################################################3
     use base64::{engine::general_purpose, Engine as _};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
@@ -38,15 +46,17 @@ pub mod implement {
             .join("module4_verify.wasm");
         let module_bytes1 = std::fs::read(module1)
             .expect("WASM module 1 could not be read, run example from wasmtime-provider folder"); // read module 1
-        let func = "serdes_example".to_string();
+        let func = FUNC_WASM_NAME;
         let engine = Engine::new(module_bytes1); // load engine
         let host = HostProvider::assign(engine).unwrap();
         let now = Instant::now();
         let mut valid_n: usize = 0;
         for _i in 0..MESSAGES_NUMBER {
             let mut s_msg = store_signed_msg.pop().unwrap();
-            //s_msg.replace_range(0..1, "x"); // error handling
-            s_msg.truncate(128); // oh shi
+            /*if _i == 1 {
+                s_msg.replace_range(0..1, "x"); // error handling
+            }*/
+            s_msg.truncate(MSG_LIMIT); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
             ver_key.truncate(SIGN_SIZE);
             let rmsg = right_messages.pop().unwrap().as_str().to_string();
@@ -57,7 +67,7 @@ pub mod implement {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &rmsg
             );
-            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA
+            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
             let data_to_wasm = WasmDataSend {
                 rmessage: rmsg.to_string(),
                 vkey: ver_key,
@@ -92,10 +102,10 @@ pub mod implement {
     ) -> Result<(), std::io::Error> {
         println!("message is {}", _testmessage);
         //----restore signe msg (to Signature)
-        let restored_signed_message = hex::decode(&encoded_signed_msg).unwrap();
+        let restored_signed_message = hex::decode(encoded_signed_msg).unwrap();
         let restored_signed_message = Signature::try_from(&restored_signed_message[..]).unwrap();
         // restore verification key
-        let ver_key = VerifyingKey::from_bytes(&encoded_vkey).unwrap();
+        let ver_key = VerifyingKey::from_bytes(encoded_vkey).unwrap();
         if ver_key
             .verify(_testmessage.as_bytes(), &restored_signed_message)
             .is_ok()

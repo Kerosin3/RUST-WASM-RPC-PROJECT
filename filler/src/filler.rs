@@ -87,7 +87,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("generating message: {} ", cyan.apply_to(&msg));
             right_messages.push(msg.to_owned());
             let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
-            let signed_msg = hex::encode(&signatured_msg); // encode signed
+            let signed_msg = hex::encode(signatured_msg); // encode signed
             if EXTRA_PRINT {
                 println!(
                     "---[{}]---\nkey={}\nS_MESSAGE={:?}",

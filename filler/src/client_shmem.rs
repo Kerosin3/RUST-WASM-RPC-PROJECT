@@ -48,8 +48,8 @@ pub mod shmem_impl {
         //-------------------------------------------------------------------
         let (sender_signed_msg, receiver_signed_msg) = unbounded();
         let (sender_ver_key, receiver_ver_key) = unbounded();
-        let recv1: crossbeam_channel::Receiver<String> = receiver_signed_msg.clone();
-        let recv_val = receiver_ver_key.clone();
+        let recv1: crossbeam_channel::Receiver<String> = receiver_signed_msg;
+        let recv_val = receiver_ver_key;
         let handler = thread::spawn(move || {
             process_in_wasm(recv1, recv_val, recv_right_msg).unwrap();
         });
