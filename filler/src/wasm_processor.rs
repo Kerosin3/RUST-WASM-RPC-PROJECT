@@ -7,6 +7,7 @@ pub mod implement {
     //################################################3
     //################################################3
     //################################################3
+    use crate::native_verification::implement::*;
     use base64::{engine::general_purpose, Engine as _};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
@@ -22,6 +23,8 @@ pub mod implement {
     use wapc_codec::messagepack::{deserialize, serialize};
 
     use console::Style;
+
+    use crate::native_verification;
     pub fn process_in_wasm(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
@@ -42,7 +45,7 @@ pub mod implement {
         let module1 = Path::new(&root_path)
             .join("target")
             .join("wasm32-unknown-unknown")
-            .join("debug")
+            .join("release")
             .join("module4_verify.wasm");
         let module_bytes1 = std::fs::read(module1)
             .expect("WASM module 1 could not be read, run example from wasmtime-provider folder"); // read module 1
@@ -67,7 +70,12 @@ pub mod implement {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &rmsg
             );
+
+            if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
+                valid_n += 1;
+            }
             //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
+            /*
             let data_to_wasm = WasmDataSend {
                 rmessage: rmsg.to_string(),
                 vkey: ver_key,
@@ -76,7 +84,6 @@ pub mod implement {
                 oper: Operation::One,
             };
             let serbytes: Vec<u8> = serialize(&data_to_wasm).unwrap(); // serialize
-                                                                       //
             println!("{}", yellow.apply_to("CALLING WASM MODULE"));
             let result = host.execute_func_call(&func, &serbytes).unwrap();
             let recv_struct: WasmDataRecv = deserialize(&result).unwrap();
@@ -84,7 +91,7 @@ pub mod implement {
             println!("Valivation from WASM: {:?}", whether_valid);
             if whether_valid == StatusFromWasm::Valid {
                 valid_n += 1;
-            }
+            }*/
         }
         let elapsed = now.elapsed();
         println!(

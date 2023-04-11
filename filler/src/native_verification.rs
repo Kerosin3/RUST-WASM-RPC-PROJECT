@@ -6,7 +6,7 @@ pub mod implement {
     };
 
     use libinteronnect::serdes::*;
-    fn verify_message_natively(
+    pub fn verify_message_natively(
         encoded_signed_msg: &String,
         encoded_vkey: &Vec<u8>,
         _testmessage: &String,
