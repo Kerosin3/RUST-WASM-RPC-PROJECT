@@ -40,7 +40,10 @@ pub mod implement {
             store_signed_msg.push(recv_sig_msg.recv().unwrap()); //values
             store_ver_keys.push(recv_ver_key.recv().unwrap()); // keys
         }
-        println!("{}", red.apply_to("START WASM PROCESSING"));
+        println!(
+            "{}",
+            red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER")
+        );
         let root_path = project_root::get_project_root().unwrap();
         let module1 = Path::new(&root_path)
             .join("target")
