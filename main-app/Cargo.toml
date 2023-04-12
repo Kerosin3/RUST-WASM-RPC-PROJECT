@@ -5,8 +5,8 @@ edition = "2021"
 
 
 [[bin]]
-name = "bin_filler"
-path = "src/filler.rs"
+name = "bin_main"
+path = "src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -41,7 +41,6 @@ random_name_generator = "0.3.4"
 
 [build-dependencies]
 tonic-build = "0.8.3"
-
 [profile.release]
 panic = 'abort'
 opt-level = 3

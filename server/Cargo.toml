@@ -47,7 +47,7 @@ thiserror = "1.0.38"
 
 [profile.release]
 panic = 'abort'
-opt-level = "2"
+opt-level = 2
 lto = true #link-time-opt
 codegen-units = 16 
 strip = "debuginfo"
