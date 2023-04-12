@@ -41,6 +41,6 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 |   Runetime	|   Release	|   performance	|   Debug	|   Performance	|
 |---		|---		|---		|---		|---		|
-|   Native	|   130 ms	|   	1	|   	|   	|
-|   Wasmtime	|   400 ms	|   	3	|   	|   	|
-|   Wasm3	|   3.8 s	|   	30	|   	|   	|
+|   Native	|   130 ms	|   	1	|   1.79 s	|   1		|
+|   Wasmtime	|   400 ms	|   	3	|   4.23 s	|   2.36	|
+|   Wasm3	|   3.8 s	|   	30	|   *	|   	|
