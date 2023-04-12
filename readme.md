@@ -19,6 +19,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * WASM
 * WASM runtimes and tools (wasm3, wasmtime, etc..)
 * WASM RPC (waPC)
+* [Cryptography] ( https://crates.io/crates/k256 )
 * Rust Unsafe
 * gRPC & protobuf (via tonic & prost)
 * NoSQL (Redis)
