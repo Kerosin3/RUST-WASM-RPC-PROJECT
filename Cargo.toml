@@ -5,15 +5,31 @@ members = [
 	"modules/*",
 	"interconnect",
 	"shmem-structs",
-	"filler"
 ]
 
 exclude = ["./test_systemd","./filler","./server","module3_bkp","/proc2"]
+
+[workspace.dependencies]
+
+shared_memory = "0.12.4"
+prost = "0.11.8"
+prost-types = "0.11.8"
+tonic = "0.8.3"
+serde = {version = "1.0.159",features =["derive"]}
+serde_with = "2.3.2"
+shmem-structs = {path="./shmem-structs"}
+wasm-core= { path= "./wasm-core"}
+wapc-codec = {path = "./wasm-core/wapc-codec"}
+wapc = {path = "./wasm-core/wapc"}
+interconnect = {path= "./interconnect"}
+wasmtime_runner = {path = "./wasm-core/wasmtime_runner"}
+wasm3_runner = {path = "./wasm-core/wasm3_runner"}
+
 [profile.release]
 panic = 'abort'
-codegen-units = 16
-opt-level = 'z'
-lto = true
+opt-level = 3
+lto = true #link-time-opt
+codegen-units = 16 # faster, but less opt
 strip = "debuginfo"
 
 [profile.dev]

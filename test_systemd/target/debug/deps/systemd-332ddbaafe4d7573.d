@@ -1,0 +1,12 @@
+/home/ker0/PROG/TESTING/test_systemd/target/debug/deps/systemd-332ddbaafe4d7573.rmeta: /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/lib.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/journal.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/daemon.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/id128.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/login.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/mod.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/types.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/unit.rs
+
+/home/ker0/PROG/TESTING/test_systemd/target/debug/deps/systemd-332ddbaafe4d7573.d: /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/lib.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/journal.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/daemon.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/id128.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/login.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/mod.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/types.rs /home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/unit.rs
+
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/lib.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/journal.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/daemon.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/id128.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/login.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/mod.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/bus/types.rs:
+/home/ker0/.cargo/registry/src/index.crates.io-6f17d22bba15001f/systemd-0.10.0/src/unit.rs:

@@ -45,3 +45,10 @@ mockall = "0.11.4"
 num = "0.4.0"
 thiserror = "1.0.38"
 
+[profile.release]
+panic = 'abort'
+opt-level = "2"
+lto = true #link-time-opt
+codegen-units = 16 
+strip = "debuginfo"
+

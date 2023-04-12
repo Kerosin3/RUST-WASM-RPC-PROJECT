@@ -1,12 +1,5 @@
-#![allow(unused_imports)]
-// use inteconnet::serdes::*;
-
-use k256::schnorr::{
-    signature::{Signer, Verifier},
-    Signature, SigningKey, VerifyingKey,
-};
-use libinteronnect::serdes::*;
-use serde::{Deserialize, Serialize};
+use k256::schnorr::{signature::Verifier, Signature, VerifyingKey};
+use libinteronnect::serdes::{Operation, StatusFromWasm, WasmDataRecv, WasmDataSend};
 use wapc_codec::messagepack::{deserialize, serialize};
 use wapc_guest as wapc;
 #[no_mangle]
@@ -14,7 +7,6 @@ pub fn wapc_init() {
     wapc::register_function("verify_message", verify_message);
 }
 
-//just return hardcoded
 fn verify_message(msg: &[u8]) -> wapc::CallResult {
     wapc::console_log(&String::from(
         "IN_WASM: Received request for `verify_message`: MODULE 4",
@@ -24,7 +16,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
         payload_back: "Error".to_string(),
         status: StatusFromWasm::Error,
     };
-    let bytes_bad = serialize(&bad_msg)?;
+    let bytes_bad = serialize(bad_msg)?;
 
     match inputstruct.oper {
         Operation::One => {
@@ -61,7 +53,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     payload_back: "Ok".to_string(),
                     status: StatusFromWasm::Valid,
                 };
-                let bytes = serialize(&msg_back)?;
+                let bytes = serialize(msg_back)?;
                 let _res =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
                 Ok(bytes.to_vec())
@@ -70,7 +62,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     payload_back: "Ok".to_string(),
                     status: StatusFromWasm::NotValid,
                 };
-                let bytes = serialize(&msg_back)?;
+                let bytes = serialize(msg_back)?;
                 let _res =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
                 Ok(bytes.to_vec())
@@ -81,7 +73,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                 payload_back: "11111".to_string(),
                 status: StatusFromWasm::Error,
             };
-            let bytes = serialize(&msg_back)?;
+            let bytes = serialize(msg_back)?;
             let _res = wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
             Ok(bytes.to_vec())
         }
