@@ -19,7 +19,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * WASM
 * WASM runtimes and tools (wasm3, wasmtime, etc..)
 * WASM RPC (waPC)
-* Rust UNSAFE
+* Rust Unsafe
 * gRPC & protobuf (via tonic & prost)
 * NoSQL (Redis)
 * Tokio
@@ -41,6 +41,6 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 |   Runetime	|   Release	|   performance	|   Debug	|   Performance	|
 |---		|---		|---		|---		|---		|
-|   Native	|   130 ms	|   	|   	|   	|
-|   Wasmtime	|   	|   	|   	|   	|
-|   Wasm3	|   	|   	|   	|   	|
+|   Native	|   130 ms	|   	1	|   	|   	|
+|   Wasmtime	|   400 ms	|   	3	|   	|   	|
+|   Wasm3	|   3.8 s	|   	30	|   	|   	|
