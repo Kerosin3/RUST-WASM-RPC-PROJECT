@@ -16,9 +16,9 @@ which main advantages are: sandboxing, planform-independent bytecode, code optim
 WASM technology, along with JS, may be used as efficent CPU-bound task executor to provide almost native code execution performance.
 
 ## Main technologies and covered tecniques
-* WASM
-* WASM runtimes and tools (wasm3, wasmtime, etc..)
-* WASM RPC (waPC)
+* [WASM]( https://webassembly.org/ )
+* WASM runtimes and tools ([wasm3]( https://github.com/wasm3/wasm3 ), [wasmtime]( https://wasmtime.dev/ ), etc..)
+* WASM RPC ([waPC]( https://wapc.io/ ))
 * [Cryptography]( https://crates.io/crates/k256 )
 * Rust Unsafe
 * gRPC & protobuf (via tonic & prost)
