@@ -29,8 +29,8 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 ## Usage
 
-## Test stand
-
+## Project structure
+![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/tree/main/docs/shema.png)
 
 ## Results
 
