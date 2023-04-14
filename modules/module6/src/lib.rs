@@ -32,11 +32,13 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
             ));
 
             let Ok(restored_signed_message) = hex::decode(&encoded_signed_msg) else {
+            wapc::console_log("eeror decoding smsg");
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             let Ok(restored_signed_message) = Signature::from_der(&restored_signed_message) else {
+            wapc::console_log("eeror signature");
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
@@ -52,7 +54,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
             {
                 let msg_back = WasmDataRecv {
                     payload_back: "Ok".to_string(),
-                    status: StatusFromWasm::NotValid,
+                    status: StatusFromWasm::Valid,
                 };
                 let bytes = serialize(msg_back)?;
                 let _res =

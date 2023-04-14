@@ -91,7 +91,11 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String) {
             let unique_key = signing_key.verifying_key();
             let unique_key = unique_key.to_sec1_bytes();
             let msg = rng.generate_name();
-            println!("generating message: {} ", cyan.apply_to(&msg));
+            println!(
+                "generating message: {} is len {} ",
+                cyan.apply_to(&msg),
+                msg.len()
+            );
             let msg1 = msg.as_bytes();
             let signatured_msg =
                 Signer::<ecdsa::Signature<k256::Secp256k1>>::sign(&signing_key, msg1);

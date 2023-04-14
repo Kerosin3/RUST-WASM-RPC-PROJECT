@@ -3,7 +3,7 @@ pub mod implement {
     //################################################3
     //################################################3
     const FUNC_WASM_NAME: &str = "verify_message";
-    const MSG_LIMIT: usize = 128;
+    const MSG_LIMIT: usize = 142;
     //################################################3
     //################################################3
     //################################################3
@@ -63,7 +63,7 @@ pub mod implement {
             }*/
             s_msg.truncate(MSG_LIMIT); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
-            ver_key.truncate(SIGN_SIZE);
+            ver_key.truncate(33);
             let rmsg = right_messages.pop().unwrap().as_str().to_string();
             println!(
                 "[{}]\nsigned message is [{}]\nver key is {}\nmessage:{}",
