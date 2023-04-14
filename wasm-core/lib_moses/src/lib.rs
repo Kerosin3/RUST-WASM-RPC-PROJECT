@@ -24,7 +24,6 @@ pub mod wasm_lib {
             Ok(())
         }
     }
-    //     use wasm_lib::wasmtime_runner::*;
     pub struct Engine {
         internal: Box<WasmtimeEngineProvider>,
     }

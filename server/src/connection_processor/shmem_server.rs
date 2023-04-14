@@ -60,8 +60,8 @@ pub mod memoryprocessor {
         unsafe {
             raw_ptr = raw_ptr.add(1); // added one byte to pointer
             let n_msg_as_bytes: [u8; mem::size_of::<u32>()] = next_num.to_ne_bytes();
-            std::ptr::copy(n_msg_as_bytes.as_ptr(), raw_ptr, mem::size_of::<u32>()); //write n msg as
-            raw_ptr.add(mem::size_of::<u32>()); // add 4 bytes
+            std::ptr::copy(n_msg_as_bytes.as_ptr(), raw_ptr, mem::size_of::<u32>());
+            //raw_ptr.add(mem::size_of::<u32>()); // add 4 bytes if need
         }
         tracing::info!("written a transaction");
     }

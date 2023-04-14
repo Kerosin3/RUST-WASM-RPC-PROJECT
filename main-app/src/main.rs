@@ -40,6 +40,7 @@ use k256::schnorr::{
     signature::{Signer, Verifier},
     Signature, SignatureBytes, SigningKey, VerifyingKey,
 };
+use k256::{PublicKey, SecretKey};
 use rand_core::OsRng;
 use rnglib::{Language, RNG};
 use std::path::PathBuf;
@@ -59,6 +60,47 @@ pub enum Runner {
     Native,
     Replace,
 }
+
+enum Message {
+    Shnoor,
+    Ecdsa,
+}
+
+fn construct_message(type_msg: Message) -> (String, Vec<u8>, String) {
+    let cyan = Style::new().cyan();
+    match type_msg {
+        Message::Shnoor => {
+            let rng = RNG::try_from(&Language::Roman).unwrap();
+            let signing_key = SigningKey::random(&mut OsRng); // generate sign key
+            let verifying_key_bytes: [u8; 32] = signing_key
+                .verifying_key()
+                .to_bytes()
+                .as_slice()
+                .try_into()
+                .expect("wrong length"); // 32-bytes VERIFY KEY
+            let unique_key: Vec<u8> = verifying_key_bytes.into(); // verify key to vec
+            let msg = rng.generate_name();
+            println!("generating message: {} ", cyan.apply_to(&msg));
+            let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
+            let signed_msg = hex::encode(signatured_msg); // encode signed
+            (signed_msg, unique_key, msg)
+        }
+        Message::Ecdsa => {
+            let rng = RNG::try_from(&Language::Roman).unwrap();
+            let signing_key = k256::ecdsa::SigningKey::random(&mut OsRng); // Serialize with `::to_bytes()`
+            let unique_key = signing_key.verifying_key();
+            let unique_key = unique_key.to_sec1_bytes();
+            let msg = rng.generate_name();
+            println!("generating message: {} ", cyan.apply_to(&msg));
+            let msg1 = msg.as_bytes();
+            let signatured_msg =
+                Signer::<ecdsa::Signature<k256::Secp256k1>>::sign(&signing_key, msg1);
+            let signed_msg = hex::encode(signatured_msg.to_der()); // encode signed
+            (signed_msg, unique_key.into(), msg)
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = Opt::from_args();
@@ -99,22 +141,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "starting generating random key-val messages pair, n=[{}]",
             MESSAGES_NUMBER
         );
-        let rng = RNG::try_from(&Language::Roman).unwrap();
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let signing_key = SigningKey::random(&mut OsRng); // generate sign key
-            let verifying_key_bytes: [u8; 32] = signing_key
-                .verifying_key()
-                .to_bytes()
-                .as_slice()
-                .try_into()
-                .expect("wrong length"); // 32-bytes VERIFY KEY
-            let unique_key: Vec<u8> = verifying_key_bytes.into(); // verify key to vec
-            let msg = rng.generate_name();
-            println!("generating message: {} ", cyan.apply_to(&msg));
+            let (signed_msg, unique_key, msg) = construct_message(Message::Shnoor);
+            //let (signed_msg, unique_key, msg) = construct_message(Message::Ecdsa);
             right_messages.push(msg.to_owned());
-            let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
-            let signed_msg = hex::encode(signatured_msg); // encode signed
             if EXTRA_PRINT {
                 println!(
                     "---[{}]---\nkey={}\nS_MESSAGE={:?}",

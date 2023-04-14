@@ -1,4 +1,5 @@
-use k256::schnorr::{signature::Verifier, Signature, VerifyingKey};
+use k256::ecdsa::signature::Verifier;
+use k256::ecdsa::{Signature, VerifyingKey};
 use libinteronnect::serdes::{Operation, StatusFromWasm, WasmDataRecv, WasmDataSend};
 use wapc_codec::messagepack::{deserialize, serialize};
 use wapc_guest as wapc;
@@ -9,7 +10,7 @@ pub fn wapc_init() {
 
 fn verify_message(msg: &[u8]) -> wapc::CallResult {
     wapc::console_log(&String::from(
-        "IN_WASM: Received request for `verify_message`: MODULE 5",
+        "IN_WASM: Received request for `verify_message`: MODULE 6",
     ));
     let inputstruct: WasmDataSend = deserialize(msg)?; // deser Name
     let bad_msg = WasmDataRecv {
@@ -35,12 +36,12 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
-            let Ok(restored_signed_message) = Signature::try_from(&restored_signed_message[..]) else {
+            let Ok(restored_signed_message) = Signature::from_der(&restored_signed_message) else {
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
-            let Ok(ver_key ) = VerifyingKey::from_bytes(&encoded_vkey) else {
+            let Ok(ver_key ) = VerifyingKey::from_sec1_bytes(&encoded_vkey) else {
                 let _resbad =
                     wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
