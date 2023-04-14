@@ -49,7 +49,7 @@ pub mod implement {
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("release")
-            .join("module4_verify.wasm");
+            .join("module6_verify.wasm");
         let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
         let func = FUNC_WASM_NAME;
         let engine = Engine::new(module_bytes1); // load engine

@@ -143,8 +143,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let (signed_msg, unique_key, msg) = construct_message(Message::Shnoor);
-            //let (signed_msg, unique_key, msg) = construct_message(Message::Ecdsa);
+            //             let (signed_msg, unique_key, msg) = construct_message(Message::Shnoor);
+            let (signed_msg, unique_key, msg) = construct_message(Message::Ecdsa);
             right_messages.push(msg.to_owned());
             if EXTRA_PRINT {
                 println!(
