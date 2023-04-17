@@ -33,6 +33,8 @@ pub mod implement {
         let yellow = Style::new().yellow();
         let magenta = Style::new().magenta();
         let red = Style::new().red();
+        let green = Style::new().green();
+        let blue = Style::new().blue();
         let mut right_messages: Vec<Answer> = right_messages.into_iter().rev().collect();
         //         let mut right_messages: Vec<String> = right_messages.into_iter().rev().collect(); // overkill
         let mut store_signed_msg: Vec<String> = vec![];
@@ -46,14 +48,23 @@ pub mod implement {
             red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER")
         );
         let root_path = project_root::get_project_root().unwrap();
+        // Shoore
         let module1 = Path::new(&root_path)
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("release")
             .join("module4_verify.wasm");
         let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
+        let module2 = Path::new(&root_path) // ecdsa
+            .join("target")
+            .join("wasm32-unknown-unknown")
+            .join("release")
+            .join("module6_verify.wasm");
+        let module_bytes2 = std::fs::read(module2).expect("WASM module could not be read"); // read module 1
+                                                                                            //----------------------------------------------------------------
         let func = FUNC_WASM_NAME;
-        let engine = Engine::new(module_bytes1); // load engine
+        let mut loaded_module = Message::Shnoor; // default-> mod 4
+        let engine = Engine::new(&module_bytes1); // load engine
         let host = HostProvider::assign(engine).unwrap();
         let now = Instant::now();
         let mut valid_n: usize = 0;
@@ -66,10 +77,33 @@ pub mod implement {
             let right_msg_struct = right_messages.pop().unwrap();
             let (answer, elen) = (right_msg_struct.msg, right_msg_struct.e_len);
             if right_msg_struct.mtype == Message::Shnoor {
-                ver_key.truncate(32);
+                if loaded_module == Message::Ecdsa {
+                    println!(
+                        "{}",
+                        red.apply_to(">>>>>>>>>>>swapping to SHNOOR module!<<<<<<<<<<<<<<<<")
+                    );
+                    host.execute_replace_module(&module_bytes1).unwrap();
+                    loaded_module = Message::Shnoor; // default-> mod 4
+                }
             } else {
-                ver_key.truncate(33);
+                // Ecdsa msg
+                if loaded_module == Message::Shnoor {
+                    println!(
+                        "{}",
+                        blue.apply_to(">>>>>>>>>>>swapping to ECDSA module!<<<<<<<<<<<<<<<<")
+                    );
+                    host.execute_replace_module(&module_bytes2).unwrap();
+                    loaded_module = Message::Ecdsa; // default-> mod 4
+                }
             }
+            match right_msg_struct.mtype {
+                Message::Shnoor => {
+                    ver_key.truncate(SIGN_SIZE - 1);
+                }
+                Message::Ecdsa => {
+                    ver_key.truncate(SIGN_SIZE);
+                }
+            };
             s_msg.truncate(elen); //adjust msg len
             println!(
                 "[{}]\nsigned message is [{}]\nver key is {}\nmessage:{}",

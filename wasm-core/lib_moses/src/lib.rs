@@ -28,7 +28,7 @@ pub mod wasm_lib {
         internal: Box<WasmtimeEngineProvider>,
     }
     impl Engine {
-        pub fn new(module_bytes: Vec<u8>) -> Self {
+        pub fn new(module_bytes: &Vec<u8>) -> Self {
             Self {
                 internal: Box::new(
                     WasmtimeEngineProviderBuilder::new()

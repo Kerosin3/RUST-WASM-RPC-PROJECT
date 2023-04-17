@@ -95,7 +95,7 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Mess
                 .expect("wrong length"); // 32-bytes VERIFY KEY
             let unique_key: Vec<u8> = verifying_key_bytes.into(); // verify key to vec
             let msg = rng.generate_name();
-            println!("generating message: {} ", cyan.apply_to(&msg));
+            println!("generating message: {} [SHNOOR]", cyan.apply_to(&msg));
             let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
             let signed_msg = hex::encode(signatured_msg); // encode signed
             let smsg_len = signed_msg.len();
@@ -108,12 +108,7 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Mess
             let unique_key = signing_key.verifying_key();
             let unique_key = unique_key.to_sec1_bytes();
             let msg = rng.generate_name();
-            println!(
-                "generating message: {} is len {}, key len is {}",
-                cyan.apply_to(&msg),
-                msg.len(),
-                unique_key.len()
-            );
+            println!("generating message: {} [ECDSA]", cyan.apply_to(&msg),);
             let msg1 = msg.as_bytes();
             let signatured_msg =
                 Signer::<ecdsa::Signature<k256::Secp256k1>>::sign(&signing_key, msg1);
