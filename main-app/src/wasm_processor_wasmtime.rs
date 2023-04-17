@@ -3,11 +3,10 @@ pub mod implement {
     //################################################3
     //################################################3
     const FUNC_WASM_NAME: &str = "verify_message";
-    const MSG_LIMIT: usize = 142;
     //################################################3
     //################################################3
     //################################################3
-    use crate::{native_verification::implement::*, Answer, Message};
+    use crate::{Answer, Message};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
         signature::{Signer, Verifier},
@@ -16,7 +15,8 @@ pub mod implement {
     use libinteronnect::serdes::*;
     use libmoses::wasm_lib::{Engine, HostProvider};
     use libshmem::datastructs::*;
-    use native_verification::implement::test_validity;
+
+    use crate::native_verification_schoor::implement::test_validity;
     use std::io::{Error, ErrorKind};
     use std::path::Path;
     use std::time::Instant;
@@ -24,7 +24,6 @@ pub mod implement {
 
     use console::Style;
 
-    use crate::native_verification;
     pub fn process_in_wasmtime(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
@@ -80,7 +79,7 @@ pub mod implement {
                 if loaded_module == Message::Ecdsa {
                     println!(
                         "{}",
-                        red.apply_to(">>>>>>>>>>>swapping to SHNOOR module!<<<<<<<<<<<<<<<<")
+                        green.apply_to(">>>>>>>>>>>swapping to SHNOOR module!<<<<<<<<<<<<<<<<")
                     );
                     host.execute_replace_module(&module_bytes1).unwrap();
                     loaded_module = Message::Shnoor; // default-> mod 4
@@ -112,12 +111,6 @@ pub mod implement {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &answer
             );
-            /*
-            if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
-                valid_n += 1;
-            }*/
-            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
-
             let data_to_wasm = WasmDataSend {
                 rmessage: answer.to_string(),
                 vkey: ver_key,
@@ -127,7 +120,7 @@ pub mod implement {
             };
             let serbytes: Vec<u8> = serialize(&data_to_wasm).unwrap(); // serialize
             println!("{}", yellow.apply_to("CALLING WASM MODULE"));
-            let result = host.execute_func_call(&func, &serbytes).unwrap();
+            let result = host.execute_func_call(func, &serbytes).unwrap();
             let recv_struct: WasmDataRecv = deserialize(&result).unwrap();
             let whether_valid = recv_struct.status;
             println!("Valivation from WASM: {:?}", whether_valid);

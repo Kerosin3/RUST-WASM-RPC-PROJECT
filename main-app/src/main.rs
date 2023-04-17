@@ -5,6 +5,7 @@
 // const KEY_LEN: usize = 10;
 const _VAL_LEN: usize = 10;
 const EXTRA_PRINT: bool = true;
+const TEST_MODE: u32 = 1; /* 0 - SHNOOR , 1- ECDSA , 2- RANDOM */
 //#######################################################
 //#######################################################
 //#######################################################
@@ -14,9 +15,12 @@ use log::*;
 use std::io::stdin;
 mod client_shmem;
 use client_shmem::shmem_impl::*;
-mod native_verification;
+mod native_verification_schoor;
+use native_verification_schoor::implement::*;
+mod native_verification_ecdsa;
+use native_verification_ecdsa::implement::*;
+
 use libshmem::datastructs::*;
-use native_verification::implement::*;
 use redis::{
     from_redis_value,
     streams::{StreamRangeReply, StreamReadOptions, StreamReadReply},
@@ -26,11 +30,8 @@ use transport::transport_interface_client::TransportInterfaceClient;
 use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
 mod wasm_processor_wasmtime;
 use wasm_processor_wasmtime::implement::*;
-/*mod wasm_processor_wasmtime_module_replace;
-mod wasm_processor_native;
-use wasm_processor_native::implement_native::*;
 mod wasm_processor_wasm3;
-use wasm_processor_wasm3::implement_wasm3::*;*/
+use wasm_processor_wasm3::implement_wasm3::*;
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
@@ -41,7 +42,7 @@ use k256::schnorr::{
     Signature, SignatureBytes, SigningKey, VerifyingKey,
 };
 use k256::{PublicKey, SecretKey};
-use rand_core::OsRng;
+use rand_core::{OsRng, RngCore};
 use rnglib::{Language, RNG};
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -54,6 +55,96 @@ struct Opt {
 //-------------------------------------------------------
 //-------------------------------------------------------
 //-------------------------------------------------------
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let opt = Opt::from_args();
+    println!("{:?}", opt);
+    let opt = match opt.runner {
+        0 => Runner::Wasmtime,
+        1 => Runner::Wasm3,
+        2 => Runner::Native,
+        3 => Runner::Replace,
+        _ => Runner::Native,
+    };
+    env_logger::init();
+    let cyan = Style::new().cyan();
+    info!("starting client app");
+    let mut client = TransportInterfaceClient::connect("http://[::1]:8080")
+        .await
+        .unwrap();
+    let response = client
+        .establish_connection(BaseRequest::construct(Cmd1::Establish))
+        .await
+        .unwrap();
+    let init = response.into_inner();
+    let redis_connection = Client::open("redis://127.0.0.1")?;
+    let mut con = redis_connection.get_tokio_connection().await?;
+    let mut right_messages: Vec<Answer> = Vec::new(); // stream_storage
+                                                      //------------------process PRC--------------------------------
+    if let Some(t) = StatusMsg::from_i32(init.msg_status) {
+        if t != StatusMsg::Proceed {
+            error!("cannot connect to server");
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "fron initial connect",
+            ))
+            .into());
+        }
+        //--------------------------------------------------------
+        info!(
+            "starting generating random key-val messages pair, n=[{}]",
+            MESSAGES_NUMBER
+        );
+        for _i in 0..MESSAGES_NUMBER {
+            // sending to server
+            let msg_type = if TEST_MODE == 1 {
+                Message::Ecdsa
+            } else if TEST_MODE == 0 {
+                Message::Shnoor
+            } else {
+                println!("{}", cyan.apply_to("generating randomly encoded message"));
+                (OsRng.next_u32() % 2).try_into().unwrap()
+            };
+            let (signed_msg, unique_key, msg, smsg_len, _) = if msg_type == Message::Shnoor {
+                construct_message(Message::Shnoor)
+            } else {
+                construct_message(Message::Ecdsa)
+            };
+            //push answer
+            right_messages.push(Answer::new(msg.clone(), smsg_len, msg_type)); // fix the right msg
+            if EXTRA_PRINT {
+                println!(
+                    "---[{}]---\nkey={}\nS_MESSAGE={:?}",
+                    _i,
+                    hex::encode(&unique_key), //ver key
+                    signed_msg                // msg signed
+                );
+            }
+            con.xadd("stream_storage", "*", &[(signed_msg.clone(), unique_key)])
+                .await?;
+        }
+        // send answers OK, senting message to PRC
+        let _response = client
+            .establish_connection(BaseRequest::construct(Cmd1::Sending(
+                "stream_storage".to_string(),
+            )))
+            .await
+            .unwrap();
+    } else {
+        error!("error processing state");
+        return Err(Box::new(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "error unwrapping status",
+        ))
+        .into());
+    }
+    info!("waiting messages to complite write to shared memory");
+    //------------------------------------------------------
+    read_shmem(MESSAGES_NUMBER, right_messages, opt);
+    //------------------------------------------------------
+    Ok(())
+}
+
 pub enum Runner {
     Wasmtime,
     Wasm3,
@@ -66,18 +157,29 @@ enum Message {
     Ecdsa,
 }
 
+impl TryFrom<u32> for Message {
+    //     type Error = ();
+    type Error = std::io::Error;
+
+    fn try_from(v: u32) -> Result<Self, Self::Error> {
+        match v {
+            x if x == Message::Shnoor as u32 => Ok(Message::Shnoor),
+            x if x == Message::Ecdsa as u32 => Ok(Message::Ecdsa),
+            _ => Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "cant make into",
+            )),
+        }
+    }
+}
 pub struct Answer {
     msg: String,
     e_len: usize,
     mtype: Message,
 }
 impl Answer {
-    fn new(rmsg: String, e_len: usize, mtype: Message) -> Self {
-        Self {
-            msg: rmsg,
-            e_len: e_len,
-            mtype: mtype,
-        }
+    fn new(msg: String, e_len: usize, mtype: Message) -> Self {
+        Self { msg, e_len, mtype }
     }
 }
 
@@ -123,90 +225,6 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Mess
             (signed_msg, unique_key.into(), msg, smsg_len, msg_type)
         }
     }
-}
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let opt = Opt::from_args();
-    println!("{:?}", opt);
-    let opt = match opt.runner {
-        0 => Runner::Wasmtime,
-        1 => Runner::Wasm3,
-        2 => Runner::Native,
-        3 => Runner::Replace,
-        _ => Runner::Native,
-    };
-    env_logger::init();
-    let cyan = Style::new().cyan();
-    info!("starting client app");
-    let mut client = TransportInterfaceClient::connect("http://[::1]:8080")
-        .await
-        .unwrap();
-    let response = client
-        .establish_connection(BaseRequest::construct(Cmd1::Establish))
-        .await
-        .unwrap();
-    let init = response.into_inner();
-    let redis_connection = Client::open("redis://127.0.0.1")?;
-    let mut con = redis_connection.get_tokio_connection().await?;
-    let mut right_messages: Vec<Answer> = Vec::new(); // stream_storage
-                                                      //------------------process PRC--------------------------------
-    if let Some(t) = StatusMsg::from_i32(init.msg_status) {
-        if t != StatusMsg::Proceed {
-            error!("cannot connect to server");
-            return Err(Box::new(std::io::Error::new(
-                std::io::ErrorKind::InvalidInput,
-                "fron initial connect",
-            ))
-            .into());
-        }
-        //--------------------------------------------------------
-        info!(
-            "starting generating random key-val messages pair, n=[{}]",
-            MESSAGES_NUMBER
-        );
-        for _i in 0..MESSAGES_NUMBER {
-            // sending to server
-            //---------------------
-            let msg_type = Message::Shnoor;
-            let (signed_msg, unique_key, msg, smsg_len, _) = if msg_type == Message::Shnoor {
-                construct_message(Message::Shnoor)
-            } else {
-                construct_message(Message::Ecdsa)
-            };
-            //push answer
-            right_messages.push(Answer::new(msg.clone(), smsg_len, msg_type)); // fix the right msg
-            if EXTRA_PRINT {
-                println!(
-                    "---[{}]---\nkey={}\nS_MESSAGE={:?}",
-                    _i,
-                    hex::encode(&unique_key), //ver key
-                    signed_msg                // msg signed
-                );
-            }
-            con.xadd("stream_storage", "*", &[(signed_msg.clone(), unique_key)])
-                .await?;
-        }
-        // send answers OK, senting message to PRC
-        let _response = client
-            .establish_connection(BaseRequest::construct(Cmd1::Sending(
-                "stream_storage".to_string(),
-            )))
-            .await
-            .unwrap();
-    } else {
-        error!("error processing state");
-        return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::InvalidInput,
-            "error unwrapping status",
-        ))
-        .into());
-    }
-    info!("waiting messages to complite write to shared memory");
-    //------------------------------------------------------
-    read_shmem(MESSAGES_NUMBER, right_messages, opt);
-    //------------------------------------------------------
-    Ok(())
 }
 
 struct BaseRequest {}

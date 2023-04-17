@@ -19,7 +19,7 @@ pub mod wasm_lib {
         pub fn execute_func_call(&self, func_name: &str, ser_data: &[u8]) -> Result<Vec<u8>> {
             Ok(self.host.call(func_name, ser_data)?)
         }
-        pub fn execute_replace_module(&self, mod_bytes: &Vec<u8>) -> Result<()> {
+        pub fn execute_replace_module(&self, mod_bytes: &[u8]) -> Result<()> {
             self.host.replace_module(mod_bytes)?;
             Ok(())
         }
@@ -28,11 +28,11 @@ pub mod wasm_lib {
         internal: Box<WasmtimeEngineProvider>,
     }
     impl Engine {
-        pub fn new(module_bytes: &Vec<u8>) -> Self {
+        pub fn new(module_bytes: &[u8]) -> Self {
             Self {
                 internal: Box::new(
                     WasmtimeEngineProviderBuilder::new()
-                        .module_bytes(&module_bytes)
+                        .module_bytes(module_bytes)
                         .build()
                         .unwrap(),
                 ),

@@ -23,6 +23,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
             let encoded_signed_msg = inputstruct.smessage;
             let encoded_vkey = inputstruct.vkey;
             let _testmessage = inputstruct.rmessage;
+            wapc::console_log("PROCESSING WITH SHNOOR METHOD");
             wapc::console_log(&format!(
                 "\nsmessage passed to wasm\n[{}]\nvkey:\n[{}]\nmessage:[{}]\n",
                 &encoded_signed_msg,
