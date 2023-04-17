@@ -1,8 +1,9 @@
 pub mod shmem_impl {
-    use crate::wasm_processor_native::implement_native::process_native;
-    use crate::wasm_processor_wasm3::implement_wasm3::*;
+    //     use crate::wasm_processor_native::implement_native::process_native;
+    //     use crate::wasm_processor_wasm3::implement_wasm3::*;
     use crate::wasm_processor_wasmtime::implement::*;
-    use crate::wasm_processor_wasmtime_module_replace::implement::process_in_wasmtime_with_replacing;
+    //     use crate::wasm_processor_wasmtime_module_replace::implement::process_in_wasmtime_with_replacing;
+    use crate::Answer;
     use crate::Runner;
     use console::Style;
     use crossbeam_channel::unbounded;
@@ -17,7 +18,7 @@ pub mod shmem_impl {
     use std::path::Path;
     use std::thread;
 
-    pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<String>, runner_type: Runner) {
+    pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<Answer>, runner_type: Runner) {
         let root_path = project_root::get_project_root().unwrap();
         let shmem_flink = Path::new(&root_path).join("server").join(MEMFILE);
         info!("getted connected to shared memory file");
@@ -59,21 +60,24 @@ pub mod shmem_impl {
                 thread::sleep(std::time::Duration::from_secs(1));
                 process_in_wasmtime(recv1, recv_val, recv_right_msg).unwrap();
             }
-            Runner::Wasm3 => {
-                println!("{}", cyan.apply_to("RUNNING IN WASM3"));
-                thread::sleep(std::time::Duration::from_secs(1));
-                process_in_wasm3(recv1, recv_val, recv_right_msg).unwrap();
-            }
-            Runner::Native => {
-                println!("{}", cyan.apply_to("RUNNING NATIVELY"));
-                thread::sleep(std::time::Duration::from_secs(1));
-                process_native(recv1, recv_val, recv_right_msg).unwrap();
-            }
-            Runner::Replace => {
-                println!("{}", cyan.apply_to("RUNNING IN WASMTIME WITH REPLACE"));
-                thread::sleep(std::time::Duration::from_secs(1));
-                process_in_wasmtime_with_replacing(recv1, recv_val, recv_right_msg).unwrap();
-            }
+            _ => {
+                unimplemented!()
+            } /*
+              Runner::Wasm3 => {
+                  println!("{}", cyan.apply_to("RUNNING IN WASM3"));
+                  thread::sleep(std::time::Duration::from_secs(1));
+                  process_in_wasm3(recv1, recv_val, recv_right_msg).unwrap();
+              }
+              Runner::Native => {
+                  println!("{}", cyan.apply_to("RUNNING NATIVELY"));
+                  thread::sleep(std::time::Duration::from_secs(1));
+                  process_native(recv1, recv_val, recv_right_msg).unwrap();
+              }
+              Runner::Replace => {
+                  println!("{}", cyan.apply_to("RUNNING IN WASMTIME WITH REPLACE"));
+                  thread::sleep(std::time::Duration::from_secs(1));
+                  process_in_wasmtime_with_replacing(recv1, recv_val, recv_right_msg).unwrap();
+              }*/
         });
         //-------------------------------------------------------------------
         unsafe {

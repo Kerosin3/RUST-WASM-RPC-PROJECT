@@ -6,7 +6,7 @@ pub mod implement_native {
     //################################################3
     //################################################3
     //################################################3
-    use crate::native_verification::implement::*;
+    use crate::{native_verification::implement::*, Answer};
     use console::Style;
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
@@ -29,7 +29,7 @@ pub mod implement_native {
     pub fn process_native(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
-        right_messages: Vec<String>,
+        right_messages: Vec<Answer>,
     ) -> Result<(), wapc::errors::Error> {
         let yellow = Style::new().yellow();
         let magenta = Style::new().magenta();

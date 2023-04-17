@@ -25,12 +25,12 @@ use redis::{
 use transport::transport_interface_client::TransportInterfaceClient;
 use transport::{ClientCommand, ClientRequest, ServerResponse, StatusMsg};
 mod wasm_processor_wasmtime;
-mod wasm_processor_wasmtime_module_replace;
 use wasm_processor_wasmtime::implement::*;
+/*mod wasm_processor_wasmtime_module_replace;
 mod wasm_processor_native;
 use wasm_processor_native::implement_native::*;
 mod wasm_processor_wasm3;
-use wasm_processor_wasm3::implement_wasm3::*;
+use wasm_processor_wasm3::implement_wasm3::*;*/
 pub mod transport {
     tonic::include_proto!("transport_interface");
 }
@@ -60,13 +60,28 @@ pub enum Runner {
     Native,
     Replace,
 }
-
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum Message {
     Shnoor,
     Ecdsa,
 }
 
-fn construct_message(type_msg: Message) -> (String, Vec<u8>, String) {
+pub struct Answer {
+    msg: String,
+    e_len: usize,
+    mtype: Message,
+}
+impl Answer {
+    fn new(rmsg: String, e_len: usize, mtype: Message) -> Self {
+        Self {
+            msg: rmsg,
+            e_len: e_len,
+            mtype: mtype,
+        }
+    }
+}
+
+fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Message) {
     let cyan = Style::new().cyan();
     match type_msg {
         Message::Shnoor => {
@@ -83,7 +98,9 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String) {
             println!("generating message: {} ", cyan.apply_to(&msg));
             let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
             let signed_msg = hex::encode(signatured_msg); // encode signed
-            (signed_msg, unique_key, msg)
+            let smsg_len = signed_msg.len();
+            let msg_type = Message::Shnoor;
+            (signed_msg, unique_key, msg, smsg_len, msg_type)
         }
         Message::Ecdsa => {
             let rng = RNG::try_from(&Language::Roman).unwrap();
@@ -92,15 +109,23 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String) {
             let unique_key = unique_key.to_sec1_bytes();
             let msg = rng.generate_name();
             println!(
-                "generating message: {} is len {} ",
+                "generating message: {} is len {}, key len is {}",
                 cyan.apply_to(&msg),
-                msg.len()
+                msg.len(),
+                unique_key.len()
             );
             let msg1 = msg.as_bytes();
             let signatured_msg =
                 Signer::<ecdsa::Signature<k256::Secp256k1>>::sign(&signing_key, msg1);
             let signed_msg = hex::encode(signatured_msg.to_der()); // encode signed
-            (signed_msg, unique_key.into(), msg)
+            println!(
+                "smsg len: {}, encoded {}",
+                signatured_msg.to_bytes().len(),
+                signed_msg.len()
+            );
+            let smsg_len = signed_msg.len();
+            let msg_type = Message::Ecdsa;
+            (signed_msg, unique_key.into(), msg, smsg_len, msg_type)
         }
     }
 }
@@ -129,7 +154,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let init = response.into_inner();
     let redis_connection = Client::open("redis://127.0.0.1")?;
     let mut con = redis_connection.get_tokio_connection().await?;
-    let mut right_messages: Vec<String> = Vec::new(); // storage
+    let mut right_messages: Vec<Answer> = Vec::new(); // stream_storage
                                                       //------------------process PRC--------------------------------
     if let Some(t) = StatusMsg::from_i32(init.msg_status) {
         if t != StatusMsg::Proceed {
@@ -147,9 +172,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            //             let (signed_msg, unique_key, msg) = construct_message(Message::Shnoor);
-            let (signed_msg, unique_key, msg) = construct_message(Message::Ecdsa);
-            right_messages.push(msg.to_owned());
+            //---------------------
+            let msg_type = Message::Shnoor;
+            let (signed_msg, unique_key, msg, smsg_len, _) = if msg_type == Message::Shnoor {
+                construct_message(Message::Shnoor)
+            } else {
+                construct_message(Message::Ecdsa)
+            };
+            //push answer
+            right_messages.push(Answer::new(msg.clone(), smsg_len, msg_type)); // fix the right msg
             if EXTRA_PRINT {
                 println!(
                     "---[{}]---\nkey={}\nS_MESSAGE={:?}",

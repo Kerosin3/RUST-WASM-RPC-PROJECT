@@ -1,4 +1,4 @@
-pub mod implement_wasm3 {
+pub mod implement {
     //################################################3
     //################################################3
     //################################################3
@@ -7,29 +7,28 @@ pub mod implement_wasm3 {
     //################################################3
     //################################################3
     //################################################3
-    use crate::native_verification;
-    use crate::native_verification::implement::*;
-    use console::Style;
+    use crate::{native_verification::implement::*, Answer};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
         signature::{Signer, Verifier},
         Signature, SigningKey, VerifyingKey,
     };
     use libinteronnect::serdes::*;
-    use libmoses::wasm_lib::host_callback;
+    use libmoses::wasm_lib::{Engine, HostProvider};
     use libshmem::datastructs::*;
     use native_verification::implement::test_validity;
     use std::io::{Error, ErrorKind};
     use std::path::Path;
     use std::time::Instant;
-    use wapc::WapcHost;
     use wapc_codec::messagepack::{deserialize, serialize};
-    use wasm3_runner::*;
 
-    pub fn process_in_wasm3(
+    use console::Style;
+
+    use crate::native_verification;
+    pub fn process_in_wasmtime_with_replacing(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
-        right_messages: Vec<String>,
+        right_messages: Vec<Answer>,
     ) -> Result<(), wapc::errors::Error> {
         let yellow = Style::new().yellow();
         let magenta = Style::new().magenta();
@@ -43,7 +42,7 @@ pub mod implement_wasm3 {
         }
         println!(
             "{}",
-            red.apply_to("START WASM PROCESSING USING WASM3 RUNNER")
+            red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER WITH REPLACE")
         );
         let root_path = project_root::get_project_root().unwrap();
         let module1 = Path::new(&root_path)
@@ -51,10 +50,17 @@ pub mod implement_wasm3 {
             .join("wasm32-unknown-unknown")
             .join("release")
             .join("module4_verify.wasm");
-        let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
+        let module_bytes1 = std::fs::read(module1).expect("WASM module 1 could not be read "); // read module 1
+        let module2 = Path::new(&root_path)
+            .join("target")
+            .join("wasm32-unknown-unknown")
+            .join("release")
+            .join("module5_verify.wasm");
+        let module_bytes2 = std::fs::read(module2).expect("WASM module 2 could not be read"); // read module 2
+
         let func = FUNC_WASM_NAME;
-        let engine = Wasm3EngineProvider::new(&module_bytes1);
-        let host = WapcHost::new(Box::new(engine), Some(Box::new(host_callback)))?;
+        let engine = Engine::new(module_bytes1); // load engine
+        let host = HostProvider::assign(engine).unwrap();
         let now = Instant::now();
         let mut valid_n: usize = 0;
         for _i in 0..MESSAGES_NUMBER {
@@ -73,12 +79,6 @@ pub mod implement_wasm3 {
                 magenta.apply_to(hex::encode(&ver_key)),
                 &rmsg
             );
-            /*
-            if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
-                valid_n += 1;
-            }*/
-            //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
-
             let data_to_wasm = WasmDataSend {
                 rmessage: rmsg.to_string(),
                 vkey: ver_key,
@@ -88,7 +88,16 @@ pub mod implement_wasm3 {
             };
             let serbytes: Vec<u8> = serialize(&data_to_wasm).unwrap(); // serialize
             println!("{}", yellow.apply_to("CALLING WASM MODULE"));
-            let result = host.call(&func, &serbytes).unwrap();
+            //####################REPLACING MODULE#########################
+            if _i == MESSAGES_NUMBER / 2 {
+                //replace module
+                println!(
+                    "{}",
+                    red.apply_to("xxxxxxxxxxxxxxx----replacing module---xxxxxxxxxxxxxxx")
+                );
+                host.execute_replace_module(&module_bytes2).unwrap();
+            }
+            let result = host.execute_func_call(&func, &serbytes).unwrap();
             let recv_struct: WasmDataRecv = deserialize(&result).unwrap();
             let whether_valid = recv_struct.status;
             println!("Valivation from WASM: {:?}", whether_valid);

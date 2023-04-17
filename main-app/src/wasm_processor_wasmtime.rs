@@ -7,7 +7,7 @@ pub mod implement {
     //################################################3
     //################################################3
     //################################################3
-    use crate::native_verification::implement::*;
+    use crate::{native_verification::implement::*, Answer, Message};
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
         signature::{Signer, Verifier},
@@ -28,12 +28,13 @@ pub mod implement {
     pub fn process_in_wasmtime(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
         recv_ver_key: crossbeam_channel::Receiver<Vec<u8>>,
-        right_messages: Vec<String>,
+        right_messages: Vec<Answer>,
     ) -> Result<(), wapc::errors::Error> {
         let yellow = Style::new().yellow();
         let magenta = Style::new().magenta();
         let red = Style::new().red();
-        let mut right_messages: Vec<String> = right_messages.into_iter().rev().collect(); // overkill
+        let mut right_messages: Vec<Answer> = right_messages.into_iter().rev().collect();
+        //         let mut right_messages: Vec<String> = right_messages.into_iter().rev().collect(); // overkill
         let mut store_signed_msg: Vec<String> = vec![];
         let mut store_ver_keys: Vec<Vec<u8>> = vec![];
         for _ms in 0..MESSAGES_NUMBER {
@@ -49,7 +50,7 @@ pub mod implement {
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("release")
-            .join("module6_verify.wasm");
+            .join("module4_verify.wasm");
         let module_bytes1 = std::fs::read(module1).expect("WASM module could not be read"); // read module 1
         let func = FUNC_WASM_NAME;
         let engine = Engine::new(module_bytes1); // load engine
@@ -61,16 +62,21 @@ pub mod implement {
             /*if _i == 1 {
                 s_msg.replace_range(0..1, "x"); // error handling
             }*/
-            s_msg.truncate(MSG_LIMIT); // oh shi
             let mut ver_key = store_ver_keys.pop().unwrap();
-            ver_key.truncate(33);
-            let rmsg = right_messages.pop().unwrap().as_str().to_string();
+            let right_msg_struct = right_messages.pop().unwrap();
+            let (answer, elen) = (right_msg_struct.msg, right_msg_struct.e_len);
+            if right_msg_struct.mtype == Message::Shnoor {
+                ver_key.truncate(32);
+            } else {
+                ver_key.truncate(33);
+            }
+            s_msg.truncate(elen); //adjust msg len
             println!(
                 "[{}]\nsigned message is [{}]\nver key is {}\nmessage:{}",
                 _i,
                 yellow.apply_to(&s_msg),
                 magenta.apply_to(hex::encode(&ver_key)),
-                &rmsg
+                &answer
             );
             /*
             if let Ok(_) = verify_message_natively(&s_msg, &ver_key, &rmsg) {
@@ -79,7 +85,7 @@ pub mod implement {
             //let _validity = test_validity(&ver_key, &s_msg, &rmsg).unwrap(); //EXTRA CHECK
 
             let data_to_wasm = WasmDataSend {
-                rmessage: rmsg.to_string(),
+                rmessage: answer.to_string(),
                 vkey: ver_key,
                 smessage: s_msg.to_owned(),
                 id: _i as i32,
