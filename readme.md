@@ -34,8 +34,9 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
     * docker & docker-compose (or redis installed)
     * protobuf
     * wasm32-unknown-unknown rustup target installed
+
 ### Usage
-    1. `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
+    1. Run `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
     2. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
     3. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
     4. Run `` cargo run -p server --release ``
