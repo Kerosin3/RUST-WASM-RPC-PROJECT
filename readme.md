@@ -2,16 +2,16 @@
 
 ## Overview
 
-This is a draft project which main purpose is to provide an experience 
+This is a draft project which main purpose is to provide an experience
 working with various aspects of Rust language and WASM technology ecosystem and tools.
-Finall goal of this project is to evaluate performance of code being executed on native 
+Final goal of this project is to evaluate performance of code being executed on native
 platform and inside WASM runtimes(wasm3,wamtime) and demonstate possibility of runtime wasm module switching during runetime.
-During project work I tried to utilize the most popular and usefull crates that can be applied to 
+During project work I tried to utilize the most popular and usefull crates that can be applied to
 this work (tokio,tonic,redis etc..), also, investigating WASM runtimes and toolchain.
 
 ## Motivation
 
-WASM technology is a very interesting and perspective technology 
+WASM technology is a very interesting and perspective technology
 which main advantages are: sandboxing, planform-independent bytecode, code optimization provided by LLVM, small binary size.
 WASM technology, along with JS, may be used as efficent CPU-bound task executor to provide almost native code execution performance.
 
@@ -27,19 +27,18 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * Shared memory
 * Serialization/Deserialzation & bin/hex code streams
 
-
 ## Requirements
-    * rustc 1.70.0-nightly
-    * docker & docker-compose (or redis installed)
-    * protobuf
-    * wasm32-unknown-unknown rustup target installed
++ rustc 1.70.0-nightly
++ docker & docker-compose (or redis installed)
++ protobuf
++ wasm32-unknown-unknown rustup target installed
 
 ## Usage
-    1. Run `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
-    2. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
-    3. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
-    4. Run `` cargo run -p server --release ``
-    5. Run `` cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
+1. Run `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
+2. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
+3. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
+4. Run `` cargo run -p server --release ``
+5. Run `` cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
 
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)
