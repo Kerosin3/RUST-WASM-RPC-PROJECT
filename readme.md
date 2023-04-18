@@ -68,7 +68,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 |   Wasm3	    |   5.5 s	|   	26	    |
 
 ### [ECDSA] Platform: linux@Windows-WSL x86_64
- * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
+ * 1024 messages, signing method: [ECDSA]( https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm )
  * Native platform: x86_64, Intel(R) Core(TM) i7-4771 CPU @ 8 cores @ 3.50GHz 
  * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
 
