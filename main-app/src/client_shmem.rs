@@ -81,7 +81,7 @@ pub mod shmem_impl {
             _ => {
                 unimplemented!()
             } /*
-                         Runner::Replace => {
+                  Runner::Replace => {
                   println!("{}", cyan.apply_to("RUNNING IN WASMTIME WITH REPLACE"));
                   thread::sleep(std::time::Duration::from_secs(1));
                   process_in_wasmtime_with_replacing(recv1, recv_val, recv_right_msg).unwrap();

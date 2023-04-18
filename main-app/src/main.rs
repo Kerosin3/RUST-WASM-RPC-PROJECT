@@ -46,7 +46,8 @@ use rand_core::{OsRng, RngCore};
 use rnglib::{Language, RNG};
 use std::path::PathBuf;
 use structopt::StructOpt;
-
+//-------------------------------------------------------
+//-------------------------------------------------------
 #[derive(Debug, StructOpt)]
 struct Opt {
     #[structopt(short = "r", long = "runner")]
@@ -79,8 +80,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let init = response.into_inner();
     let redis_connection = Client::open("redis://127.0.0.1")?;
     let mut con = redis_connection.get_tokio_connection().await?;
-    let mut right_messages: Vec<Answer> = Vec::new(); // stream_storage
-                                                      //------------------process PRC--------------------------------
+    // asnwer storage
+    let mut right_messages: Vec<Answer> = Vec::new();
+    /*------------------process PRC--------------------------------*/
     if let Some(t) = StatusMsg::from_i32(init.msg_status) {
         if t != StatusMsg::Proceed {
             error!("cannot connect to server");
@@ -158,7 +160,6 @@ enum Message {
 }
 
 impl TryFrom<u32> for Message {
-    //     type Error = ();
     type Error = std::io::Error;
 
     fn try_from(v: u32) -> Result<Self, Self::Error> {
@@ -226,7 +227,7 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Mess
         }
     }
 }
-
+//-------------------IPC-----------------------
 struct BaseRequest {}
 enum Cmd1 {
     Establish,

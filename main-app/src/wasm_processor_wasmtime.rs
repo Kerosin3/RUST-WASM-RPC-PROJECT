@@ -35,7 +35,6 @@ pub mod implement {
         let green = Style::new().green();
         let blue = Style::new().blue();
         let mut right_messages: Vec<Answer> = right_messages.into_iter().rev().collect();
-        //         let mut right_messages: Vec<String> = right_messages.into_iter().rev().collect(); // overkill
         let mut store_signed_msg: Vec<String> = vec![];
         let mut store_ver_keys: Vec<Vec<u8>> = vec![];
         for _ms in 0..MESSAGES_NUMBER {
