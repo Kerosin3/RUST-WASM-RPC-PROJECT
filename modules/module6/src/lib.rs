@@ -35,18 +35,18 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
             let Ok(restored_signed_message) = hex::decode(&encoded_signed_msg) else {
             wapc::console_log("eeror decoding smsg");
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify ECDSA, bad decoding", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             let Ok(restored_signed_message) = Signature::from_der(&restored_signed_message) else {
-            wapc::console_log("eeror signature");
+            wapc::console_log("error signature");
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify ECDSA, bad signature decoding", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             let Ok(ver_key ) = VerifyingKey::from_sec1_bytes(&encoded_vkey) else {
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify ECDSA, error decoding key", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             if ver_key
@@ -58,8 +58,12 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     status: StatusFromWasm::Valid,
                 };
                 let bytes = serialize(msg_back)?;
-                let _res =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                let _res = wapc::host_call(
+                    "binding",
+                    "sample:namespace",
+                    "verifying ECDSA success!",
+                    &bytes,
+                )?;
                 Ok(bytes.to_vec())
             } else {
                 let msg_back = WasmDataRecv {
@@ -67,8 +71,12 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     status: StatusFromWasm::NotValid,
                 };
                 let bytes = serialize(msg_back)?;
-                let _res =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                let _res = wapc::host_call(
+                    "binding",
+                    "sample:namespace",
+                    "verify ECDSA failed!",
+                    &bytes,
+                )?;
                 Ok(bytes.to_vec())
             }
         }
@@ -78,7 +86,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                 status: StatusFromWasm::Error,
             };
             let bytes = serialize(msg_back)?;
-            let _res = wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+            let _res = wapc::host_call("binding", "sample:namespace", "not implemented!", &bytes)?;
             Ok(bytes.to_vec())
         }
     }

@@ -5,6 +5,7 @@ members = [
 	"modules/*",
 	"interconnect",
 	"shmem-structs",
+	"server"
 ]
 
 exclude = ["./test_systemd","./filler","./server","module3_bkp","/proc2"]

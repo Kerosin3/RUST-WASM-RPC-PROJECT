@@ -6,7 +6,9 @@ pub mod implement {
     //################################################3
     //################################################3
     //################################################3
+    use crate::native_verification_schoor::implement::test_validity;
     use crate::{Answer, Message};
+    use console::Style;
     use crossbeam_channel::unbounded;
     use k256::schnorr::{
         signature::{Signer, Verifier},
@@ -15,14 +17,10 @@ pub mod implement {
     use libinteronnect::serdes::*;
     use libmoses::wasm_lib::{Engine, HostProvider};
     use libshmem::datastructs::*;
-
-    use crate::native_verification_schoor::implement::test_validity;
     use std::io::{Error, ErrorKind};
     use std::path::Path;
     use std::time::Instant;
     use wapc_codec::messagepack::{deserialize, serialize};
-
-    use console::Style;
 
     pub fn process_in_wasmtime(
         recv_sig_msg: crossbeam_channel::Receiver<String>,
@@ -78,7 +76,7 @@ pub mod implement {
                 if loaded_module == Message::Ecdsa {
                     println!(
                         "{}",
-                        green.apply_to(">>>>>>>>>>>swapping to SHNOOR module!<<<<<<<<<<<<<<<<")
+                        green.apply_to(">>>>>>>>>>>swapping to SCHNORR module!<<<<<<<<<<<<<<<<")
                     );
                     host.execute_replace_module(&module_bytes1).unwrap();
                     loaded_module = Message::Shnoor; // default-> mod 4

@@ -5,7 +5,7 @@
 // const KEY_LEN: usize = 10;
 const _VAL_LEN: usize = 10;
 const EXTRA_PRINT: bool = true;
-const TEST_MODE: u32 = 1; /* 0 - SHNOOR , 1- ECDSA , 2- RANDOM */
+const TEST_MODE: u32 = 2; /* 0 - SCHNORR , 1- ECDSA , 2- RANDOM */
 //#######################################################
 //#######################################################
 //#######################################################
@@ -198,7 +198,7 @@ fn construct_message(type_msg: Message) -> (String, Vec<u8>, String, usize, Mess
                 .expect("wrong length"); // 32-bytes VERIFY KEY
             let unique_key: Vec<u8> = verifying_key_bytes.into(); // verify key to vec
             let msg = rng.generate_name();
-            println!("generating message: {} [SHNOOR]", cyan.apply_to(&msg));
+            println!("generating message: {} [SCHNORR]", cyan.apply_to(&msg));
             let signatured_msg = signing_key.sign(msg.as_bytes()).to_bytes(); // sign msg
             let signed_msg = hex::encode(signatured_msg); // encode signed
             let smsg_len = signed_msg.len();

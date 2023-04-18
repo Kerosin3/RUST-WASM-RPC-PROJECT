@@ -23,7 +23,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
             let encoded_signed_msg = inputstruct.smessage;
             let encoded_vkey = inputstruct.vkey;
             let _testmessage = inputstruct.rmessage;
-            wapc::console_log("PROCESSING WITH SHNOOR METHOD");
+            wapc::console_log("PROCESSING WITH SCHNORR METHOD");
             wapc::console_log(&format!(
                 "\nsmessage passed to wasm\n[{}]\nvkey:\n[{}]\nmessage:[{}]\n",
                 &encoded_signed_msg,
@@ -33,17 +33,17 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
 
             let Ok(restored_signed_message) = hex::decode(&encoded_signed_msg) else {
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify SCHNORR decoding failed", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             let Ok(restored_signed_message) = Signature::try_from(&restored_signed_message[..]) else {
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify SCHNORR signature decoding failed!", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             let Ok(ver_key ) = VerifyingKey::from_bytes(&encoded_vkey) else {
                 let _resbad =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes_bad)?;
+                    wapc::host_call("binding", "sample:namespace", "verify SCHNORR vkey recovery failed", &bytes_bad)?;
                 return Ok(bytes_bad.to_vec());
             };
             if ver_key
@@ -55,8 +55,12 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     status: StatusFromWasm::Valid,
                 };
                 let bytes = serialize(msg_back)?;
-                let _res =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                let _res = wapc::host_call(
+                    "binding",
+                    "sample:namespace",
+                    "veryfy SCHNORR passed!",
+                    &bytes,
+                )?;
                 Ok(bytes.to_vec())
             } else {
                 let msg_back = WasmDataRecv {
@@ -64,8 +68,12 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                     status: StatusFromWasm::NotValid,
                 };
                 let bytes = serialize(msg_back)?;
-                let _res =
-                    wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+                let _res = wapc::host_call(
+                    "binding",
+                    "sample:namespace",
+                    "verify SCHNORR failed!",
+                    &bytes,
+                )?;
                 Ok(bytes.to_vec())
             }
         }
@@ -75,7 +83,7 @@ fn verify_message(msg: &[u8]) -> wapc::CallResult {
                 status: StatusFromWasm::Error,
             };
             let bytes = serialize(msg_back)?;
-            let _res = wapc::host_call("binding", "sample:namespace", "serdes_and_hash", &bytes)?;
+            let _res = wapc::host_call("binding", "sample:namespace", "not implemented!", &bytes)?;
             Ok(bytes.to_vec())
         }
     }

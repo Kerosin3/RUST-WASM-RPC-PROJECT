@@ -11,6 +11,7 @@ pub mod implement {
     use libshmem::datastructs::MESSAGES_NUMBER;
     use libshmem::datastructs::*;
     use std::io::{Error, ErrorKind};
+    use std::time::Instant;
     use tonic::codegen::http::header::TE;
 
     pub fn verify_message_natively_schoor(
@@ -26,6 +27,7 @@ pub mod implement {
         let magenta = Style::new().magenta();
         let mut right_messages: Vec<Answer> = right_messages.into_iter().collect();
         let mut r_answers: usize = 0;
+        let now = Instant::now();
         for _i in 0..MESSAGES_NUMBER {
             let mut encoded_signed_msg = recv_sig_msg.recv().unwrap();
             let r_msg_struct = right_messages.pop().unwrap();
@@ -61,9 +63,10 @@ pub mod implement {
                 ));
             }
         }
+        let elapsed = now.elapsed();
         println!(
-            "------------>>TOTAL MESSAGES:{}, VALID: {}, USED METHOD: [SCHOOR]<<--------------------",
-            MESSAGES_NUMBER, r_answers
+            "------------>>TOTAL MESSAGES:{}, VALID: {}, USED METHOD: [SCHOOR], elapsed: {:.2?}<<--------------------",
+            MESSAGES_NUMBER, r_answers, elapsed
         );
         Ok(())
     }

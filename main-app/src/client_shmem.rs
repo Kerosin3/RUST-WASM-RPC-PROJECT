@@ -21,7 +21,7 @@ pub mod shmem_impl {
 
     pub fn read_shmem(n_msg: u32, recv_right_msg: Vec<Answer>, runner_type: Runner) {
         let root_path = project_root::get_project_root().unwrap();
-        let shmem_flink = Path::new(&root_path).join("server").join(MEMFILE);
+        let shmem_flink = Path::new(&root_path).join(MEMFILE);
         info!("getted connected to shared memory file");
         let memsize: usize = MEMSIZE;
         let shmem = ShmemConf::new()

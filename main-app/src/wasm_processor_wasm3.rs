@@ -32,8 +32,6 @@ pub mod implement_wasm3 {
         let yellow = Style::new().yellow();
         let magenta = Style::new().magenta();
         let red = Style::new().red();
-        let green = Style::new().green();
-        let blue = Style::new().blue();
         let mut right_messages: Vec<Answer> = right_messages.into_iter().rev().collect();
         let mut store_signed_msg: Vec<String> = vec![];
         let mut store_ver_keys: Vec<Vec<u8>> = vec![];

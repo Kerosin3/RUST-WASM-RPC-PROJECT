@@ -36,22 +36,54 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
     * wasm32-unknown-unknown rustup target installed
 ### Usage
     1. Run ``docker-compose -f docker-compose-redis.yml up`` in redis-compose directory.
-    2. Run ``cargo run -p server --release``
-    3. Run ``cargo run -p main-app --release``
+    2. Compile WASM module ``cargo build -p module4-verify --target wasm32-unknown-unknown --release``
+    3. Compile WASM module ``cargo build -p module6-verify --target wasm32-unknown-unknown --release``
+    4. Run ``cargo run -p server --release``
+    5. Run ``cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
 
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)
 
 ## Results
 
-### Tesbench setup
+### [SCHNOOR] Platform: linux@Windows-WSL x86_64
+ * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
+ * Native platform: x86_64, Intel(R) Core(TM) i7-4770K CPU @ 8 cores @ 3.50GHz 
+ * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
+
+#### Codegen-units 8
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   234 ms	|   	1	    |
+|   Wasmtime	|   630 ms	|   	2.7	    |
+|   Wasm3	    |   5.51 s	|   	23	    |
+
+#### Codegen-units 1
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   208 ms	|   	1	    |
+|   Wasmtime	|   603 ms	|   	2.9	    |
+|   Wasm3	    |   5.5 s	|   	26	    |
+
+### [ECDSA] Platform: linux@Windows-WSL x86_64
  * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
  * Native platform: x86_64, Intel(R) Core(TM) i7-4771 CPU @ 8 cores @ 3.50GHz 
- * Optimization: native: optimization 3,lto=true, wasm: optimization=s,lto=true,strip=true
+ * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
 
+#### Codegen-units 8
 
-|   Runetime	|   Release	|   performance	|   Debug	|   Performance	|
-|---		|---		|---		|---		|---		|
-|   Native	|   130 ms	|   	1	|   1.79 s	|   1		|
-|   Wasmtime	|   400 ms	|   	3	|   4.23 s	|   2.36	|
-|   Wasm3	|   3.8 s	|   	30	|   *	|   	|
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   208 ms	|   	1	    |
+|   Wasmtime	|   615 ms	|   	2.9	    |
+|   Wasm3	    |   5.1 s	|   	24	    |
+
+#### Codegen-units 1
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   251 ms	|   	1	    |
+|   Wasmtime	|   753 ms	|   	3	    |
+|   Wasm3	    |   6.2 s	|   	24	    |
