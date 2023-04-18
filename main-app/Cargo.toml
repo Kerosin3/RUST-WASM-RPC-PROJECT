@@ -34,7 +34,8 @@ hex = "0.4.3"
 crossbeam = {version = "0.8.2"}
 crossbeam-channel = "0.5.7"
 k256 = {version = "0.13.1", default-features=false,features = ["ecdsa","sha256","schnorr"]}
-rand_core = {version = "0.6.4", features = ["getrandom"]}
+rand_core = {version = "0.6.4"}
+#rand_core = {version = "0.6.4", features = ["getrandom"]}
 console = "0.15.5"
 structopt = "0.3.26"
 random_name_generator = "0.3.4"

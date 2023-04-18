@@ -29,6 +29,16 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 ## Usage
 
+### Requirements
+    * rustc 1.70.0-nightly
+    * docker & docker-compose (or redis installed)
+    * protobuf
+    * wasm32-unknown-unknown rustup target installed
+### Usage
+    1. Run ``docker-compose -f docker-compose-redis.yml up`` in redis-compose directory.
+    2. Run ``cargo run -p server --release``
+    3. Run ``cargo run -p main-app --release``
+
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)
 

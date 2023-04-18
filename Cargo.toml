@@ -24,7 +24,6 @@ wapc = {path = "./wasm-core/wapc"}
 interconnect = {path= "./interconnect"}
 wasmtime_runner = {path = "./wasm-core/wasmtime_runner"}
 wasm3_runner = {path = "./wasm-core/wasm3_runner"}
-
 [profile.release]
 panic = 'abort'
 opt-level = 3
