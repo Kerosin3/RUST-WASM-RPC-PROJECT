@@ -27,15 +27,14 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * Shared memory
 * Serialization/Deserialzation & bin/hex code streams
 
-## Usage
 
-### Requirements
+## Requirements
     * rustc 1.70.0-nightly
     * docker & docker-compose (or redis installed)
     * protobuf
     * wasm32-unknown-unknown rustup target installed
 
-### Usage
+## Usage
     1. Run `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
     2. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
     3. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
