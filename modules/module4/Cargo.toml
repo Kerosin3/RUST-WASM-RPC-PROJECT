@@ -3,6 +3,7 @@ cargo-features = ["per-package-target"]
 name = "module4-verify"
 version = "0.1.0"
 authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
+description = "SCHNORR digital signature authencation wasm module"
 edition = "2021"
 resolver = "2"
 forced-target = "wasm32-unknown-unknown"

@@ -45,9 +45,12 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 ## Results
 
-### [SCHNOOR] Platform: linux@Windows-WSL x86_64
+## Hardware Platform
+* x86_64, Intel(R) Core(TM) i7-4770K CPU @ 8 cores @ 3.50GHz 
+* Linux@Windows-WSL x86_64
+
+### [SCHNOOR] 
  * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
- * Native platform: x86_64, Intel(R) Core(TM) i7-4770K CPU @ 8 cores @ 3.50GHz 
  * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
 
 #### Codegen-units 8
@@ -66,7 +69,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 |   Wasmtime	|   603 ms	|   	2.9	    |
 |   Wasm3	    |   5.5 s	|   	26	    |
 
-### [ECDSA] Platform: linux@Windows-WSL x86_64
+### [ECDSA] 
  * 1024 messages, signing method: [ECDSA]( https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm )
  * Native platform: x86_64, Intel(R) Core(TM) i7-4771 CPU @ 8 cores @ 3.50GHz 
  * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
@@ -86,3 +89,48 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 |   Native	    |   251 ms	|   	1	    |
 |   Wasmtime	|   753 ms	|   	3	    |
 |   Wasm3	    |   6.2 s	|   	24	    |
+
+## Hardware Platform
+* x86_64, Intel(R) Core(TM) i7-4771K CPU @ 8 cores @ 3.50GHz 
+* Linux@6.2.2 x86_64
+
+### [SCHNOOR] 
+ * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
+ * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
+
+#### Codegen-units 8
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   130 ms	|   	1	    |
+|   Wasmtime	|   395 ms	|   	3	    |
+|   Wasm3	    |   3.91 s	|   	30	    |
+
+#### Codegen-units 1
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   125 ms	|   	1	    |
+|   Wasmtime	|   390 ms	|   	3.1	    |
+|   Wasm3	    |   3.75 s	|   	30	    |
+
+### [ECDSA]
+ * 1024 messages, signing method: [ECDSA]( https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm )
+ * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
+
+#### Codegen-units 8
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   475 ms	|   	1	    |
+|   Wasmtime	|   146 ms	|   	3.2	    |
+|   Wasm3	    |   4.01 s	|   	27	    |
+
+#### Codegen-units 1
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   145 ms	|   	1	    |
+|   Wasmtime	|   450 ms	|   	3.1	    |
+|   Wasm3	    |   3.87 s	|   	26	    |
+

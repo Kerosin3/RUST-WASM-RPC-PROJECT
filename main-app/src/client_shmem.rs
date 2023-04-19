@@ -62,7 +62,7 @@ pub mod shmem_impl {
                 process_in_wasmtime(recv1, recv_val, recv_right_msg).unwrap();
             }
             Runner::Native => {
-                if TEST_MODE == 0 {
+                if unsafe { TEST_MODE == 0 } {
                     //schoor
                     println!("{}", cyan.apply_to("RUNNING NATIVELY"));
                     thread::sleep(std::time::Duration::from_secs(1));

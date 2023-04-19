@@ -3,6 +3,7 @@ cargo-features = ["per-package-target"]
 name = "module6-verify"
 version = "0.1.0"
 authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
+description = "ECDSA digital signature authencation wasm module"
 edition = "2021"
 resolver = "2"
 forced-target = "wasm32-unknown-unknown"

@@ -17,7 +17,7 @@ pub mod implement {
         right_messages: Vec<Answer>,
     ) -> Result<(), wapc::errors::Error> {
         println!("-------VERIFYING ECDSA NATIVELY -----------");
-        if TEST_MODE >= 2 {
+        if unsafe { TEST_MODE >= 2 } {
             panic!("RANDOM VERIFYING IS NOT IMPLEMENTED IN NATIVE RUNTIME");
         }
         let yellow = Style::new().yellow();

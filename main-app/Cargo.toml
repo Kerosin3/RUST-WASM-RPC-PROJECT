@@ -2,13 +2,15 @@
 name = "main-app"
 version = "0.1.0"
 edition = "2021"
-
+authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
+description = "main application to generate and verify messages"
+license = "Apache-2.0"
+keywords = ["wapc", "webassembly", "wasm", "wasmtime","rpc"]
 
 [[bin]]
 name = "bin_main"
 path = "src/main.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 shared_memory = {workspace=true}

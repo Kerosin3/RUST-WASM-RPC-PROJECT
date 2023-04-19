@@ -58,9 +58,9 @@ pub mod implement_wasm3 {
             .join("module6_verify.wasm");
         let module_bytes2 = std::fs::read(module2).expect("WASM module could not be read"); // read module 1
         let func = FUNC_WASM_NAME;
-        let module_choose = if TEST_MODE == 0 {
+        let module_choose = if unsafe { TEST_MODE == 0 } {
             module_bytes1 // schoor
-        } else if TEST_MODE == 1 {
+        } else if unsafe { TEST_MODE == 1 } {
             module_bytes2
         } else {
             panic!("module replacing is not implemented by WASM3");

@@ -1,15 +1,11 @@
 [package]
 name = "wasm-core"
 version = "0.1.0"
-authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
-
-#[workspace]
-
+authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
 description = "modular RPC (WASM) cypher library"
 license = "Apache-2.0"
-#readme = "README.md"
-#keywords = ["sdk", "wapc", "webassembly", "wasm", "wasmtime"]
-#categories = ["wasm", "api-bindings"]
+keywords = ["wapc", "webassembly", "wasm", "wasmtime","rpc"]
+
 [lib]
 name = "libmoses"
 path = "./lib_moses/src/lib.rs"

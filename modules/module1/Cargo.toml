@@ -2,7 +2,6 @@ cargo-features = ["per-package-target"]
 [package]
 name = "module1-hash"
 version = "0.1.0"
-authors = ["Jarrod Overson <jsoverson@gmail.com>"]
 edition = "2021"
 forced-target = "wasm32-unknown-unknown"
 [lib]

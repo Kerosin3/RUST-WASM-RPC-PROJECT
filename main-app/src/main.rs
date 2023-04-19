@@ -5,7 +5,7 @@
 // const KEY_LEN: usize = 10;
 const _VAL_LEN: usize = 10;
 const EXTRA_PRINT: bool = true;
-const TEST_MODE: u32 = 2; /* 0 - SCHNORR , 1- ECDSA , 2- RANDOM */
+static mut TEST_MODE: u32 = 1_u32; /* 0 - SCHNORR , 1- ECDSA , 2- RANDOM */
 //#######################################################
 //#######################################################
 //#######################################################
@@ -13,6 +13,7 @@ const TEST_MODE: u32 = 2; /* 0 - SCHNORR , 1- ECDSA , 2- RANDOM */
 //-------------------------------------------------------
 use log::*;
 use std::io::stdin;
+use std::{borrow::Borrow, cell::RefCell};
 mod client_shmem;
 use client_shmem::shmem_impl::*;
 mod native_verification_schoor;
@@ -52,6 +53,8 @@ use structopt::StructOpt;
 struct Opt {
     #[structopt(short = "r", long = "runner")]
     runner: u32,
+    #[structopt(short = "m", long = "method")]
+    method: u32,
 }
 //-------------------------------------------------------
 //-------------------------------------------------------
@@ -59,7 +62,6 @@ struct Opt {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = Opt::from_args();
-    println!("{:?}", opt);
     let opt = match opt.runner {
         0 => Runner::Wasmtime,
         1 => Runner::Wasm3,
@@ -67,8 +69,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         3 => Runner::Replace,
         _ => Runner::Native,
     };
+    let mthd = Opt::from_args();
+    let _mthd = match mthd.method {
+        0_u32 => unsafe { TEST_MODE = 0_u32 },
+        1_u32 => unsafe { TEST_MODE = 1_u32 },
+        2_u32 => unsafe { TEST_MODE = 2_u32 },
+        _ => unsafe { TEST_MODE = 0_u32 },
+    };
+    assert_eq!(unsafe { TEST_MODE }, mthd.method);
     env_logger::init();
     let cyan = Style::new().cyan();
+    println!(
+        "STARTING APP TO USE RUNTIME:{}, AND METHOD:{}",
+        mthd.runner, mthd.method
+    );
     info!("starting client app");
     let mut client = TransportInterfaceClient::connect("http://[::1]:8080")
         .await
@@ -99,9 +113,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         for _i in 0..MESSAGES_NUMBER {
             // sending to server
-            let msg_type = if TEST_MODE == 1 {
+            let msg_type = if unsafe { TEST_MODE == 1 } {
                 Message::Ecdsa
-            } else if TEST_MODE == 0 {
+            } else if unsafe { TEST_MODE == 0 } {
                 Message::Shnoor
             } else {
                 println!("{}", cyan.apply_to("generating randomly encoded message"));
