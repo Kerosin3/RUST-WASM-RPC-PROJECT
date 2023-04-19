@@ -1,15 +1,11 @@
 [package]
 name = "interconnect"
 version = "0.1.0"
-authors = ["Alex Vdovydchemko <keromvp@gmail.com>"]
-
-#[workspace]
+authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
+description = "common structures for WASM and RUST"
 
 description = "common interconnect sources"
 license = "Apache-2.0"
-#readme = "README.md"
-#keywords = ["sdk", "wapc", "webassembly", "wasm", "wasmtime"]
-#categories = ["wasm", "api-bindings"]
 [lib]
 name = "libinteronnect"
 path = "./src/lib.rs"

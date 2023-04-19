@@ -44,6 +44,26 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)
 
+## Project organization
+```bash
+├── bins
+├── Cargo.lock
+├── Cargo.toml
+├── docs
+├── interconnect
+├── main-app
+├── memshare
+├── modules
+├── proto
+├── readme.md
+├── redis-compose
+├── rust-toolchain.toml
+├── server
+├── shmem-structs
+├── target
+├── test_systemd
+└── wasm-core
+```
 # Results
 
 ## Hardware Platform
