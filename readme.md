@@ -137,10 +137,10 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 
 ## Module Swapping performance
-+ *Random message* (SCHNORR or ECDSA) of count 1024, runetime module swapping, WASMTIME runtime
++ **Random message** (SCHNORR or ECDSA) of count 1024, runetime module swapping, WASMTIME runtime
 ### Hardware Platform
 * x86_64, Intel(R) Core(TM) i7-4771K CPU @ 8 cores @ 3.50GHz 
 * Linux@6.2.2 x86_64
 #### Result
-+ *total message processing time = 31.2 s, i.e about  30 ms to process one message (include module swapping)*
++ **total message processing time = 31.2 s, i.e about  30 ms to process one message (include module swapping)**
 
