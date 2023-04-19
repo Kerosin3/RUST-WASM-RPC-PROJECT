@@ -1,4 +1,4 @@
-# Project RUST and WASM performance and runtime-reloadable modules
+# Project server-client app (RUST) with runetime reloadable WebAssembly modules and its performance evaluation
 
 ## Overview
 
