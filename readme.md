@@ -161,7 +161,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 #### Result
 + **total message processing time = 31.2 s, i.e about  30 ms to process one message (include module swapping)**
 
-### Single message performance
+## Single message performance
 
 - Linux@6.2.2 x86_64, Schorr method: 
 
