@@ -175,6 +175,6 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 Being a "Web Assembly interpretier" [meta machine]( https://github.com/wasm3/wasm3/blob/main/docs/Interpreter.md#m3-massey-meta-machine ), wasm3 is expectindly demonstrate the worst performance,
 being compared to native and Wasmtime platforms.
-Wasmtime, which utilzes [AOT and JIT technology]( https://github.com/bytecodealliance/wasmtime#features ), preforms much faster that wasm3,
+Wasmtime, which utilzes [AOT and JIT technologies]( https://github.com/bytecodealliance/wasmtime#features ), preforms much faster that wasm3,
 but still, x3 slower, than compared to native x86_64 platform.
 
