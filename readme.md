@@ -75,17 +75,17 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 |   Runetime	|   Release	|   performance	|
 |---		    |---		|---		    |
-|   Native	    |   234 ms	|   	1	    |
-|   Wasmtime	|   630 ms	|   	2.7	    |
-|   Wasm3	    |   5.51 s	|   	23	    |
+|   Native	    |   170 ms	|   	1	    |
+|   Wasmtime	|   542 ms	|   	3.1	    |
+|   Wasm3	    |   4.9 s	|   	28	    |
 
 #### Codegen-units 1
 
 |   Runetime	|   Release	|   performance	|
 |---		    |---		|---		    |
-|   Native	    |   208 ms	|   	1	    |
-|   Wasmtime	|   603 ms	|   	2.9	    |
-|   Wasm3	    |   5.5 s	|   	26	    |
+|   Native	    |   167 ms	|   	1	    |
+|   Wasmtime	|   470 ms	|   	2.7	    |
+|   Wasm3	    |   4.9 s	|   	29	    |
 
 ### [ECDSA] 
  * 1024 messages, signing method: [ECDSA]( https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm )
@@ -96,17 +96,17 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 |   Runetime	|   Release	|   performance	|
 |---		    |---		|---		    |
-|   Native	    |   208 ms	|   	1	    |
-|   Wasmtime	|   615 ms	|   	2.9	    |
-|   Wasm3	    |   5.1 s	|   	24	    |
+|   Native	    |   189 ms	|   	1	    |
+|   Wasmtime	|   720 ms	|   	3.7	    |
+|   Wasm3	    |   5.1 s	|   	26	    |
 
 #### Codegen-units 1
 
 |   Runetime	|   Release	|   performance	|
 |---		    |---		|---		    |
-|   Native	    |   251 ms	|   	1	    |
-|   Wasmtime	|   753 ms	|   	3	    |
-|   Wasm3	    |   6.2 s	|   	24	    |
+|   Native	    |   178 ms	|   	1	    |
+|   Wasmtime	|   612 ms	|   	3.4	    |
+|   Wasm3	    |   5.0 s	|   	28	    |
 
 ## Hardware Platform
 * x86_64, Intel(R) Core(TM) i7-4771K CPU @ 8 cores @ 3.50GHz 

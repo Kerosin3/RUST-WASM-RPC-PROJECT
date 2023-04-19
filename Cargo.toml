@@ -29,11 +29,11 @@ wasm3_runner = {path = "./wasm-core/wasm3_runner"}
 panic = 'abort'
 opt-level = 3
 lto = true #link-time-opt
-codegen-units = 16 # faster, but less opt
+codegen-units = 1 # faster, but less opt
 strip = "debuginfo"
 
 [profile.dev]
 opt-level = 0
 debug = true
-codegen-units = 1
+codegen-units = 8
 split-debuginfo = "unpacked"
