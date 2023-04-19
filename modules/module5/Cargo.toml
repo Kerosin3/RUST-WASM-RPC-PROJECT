@@ -4,7 +4,6 @@ name = "module5-verify"
 version = "0.1.0"
 authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
 edition = "2021"
-resolver = "2"
 forced-target = "wasm32-unknown-unknown"
 [lib]
 crate-type = ["cdylib"]

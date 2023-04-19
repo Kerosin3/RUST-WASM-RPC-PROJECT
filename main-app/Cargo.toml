@@ -48,5 +48,5 @@ tonic-build = "0.8.3"
 panic = 'abort'
 opt-level = 3
 lto = true #link-time-opt
-codegen-units = 8 
+codegen-units = 1 
 strip = "debuginfo"

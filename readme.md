@@ -39,7 +39,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 3. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
 4. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
 5. Run `` cargo run -p server --release ``
-6. Run `` cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
+6. Run `` cargo run -p main-app --release -- --runner 0 --method 2 `` to run example with module runtime replace
 
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)

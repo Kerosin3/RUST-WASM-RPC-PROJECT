@@ -2,8 +2,6 @@
 name = "interconnect"
 version = "0.1.0"
 authors = ["Alex Vdovydchenko <keromvp@gmail.com>"]
-description = "common structures for WASM and RUST"
-
 description = "common interconnect sources"
 license = "Apache-2.0"
 [lib]
