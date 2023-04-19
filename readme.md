@@ -9,6 +9,30 @@ platform and inside WASM runtimes(wasm3,wamtime) and demonstate possibility of r
 During project work I tried to utilize the most popular and usefull crates that can be applied to
 this work (tokio,tonic,redis etc..), also, investigating WASM runtimes and toolchain.
 
+### Code structure
+```console
+===============================================================================
+ Language            Files        Lines         Code     Comments       Blanks
+===============================================================================
+ Makefile                1           18           13            2            3
+ Protocol Buffers        1           36           27            2            7
+ Plain Text              1          201            0          169           32
+ TOML                   19          497          444            4           49
+ YAML                    1           13           13            0            0
+-------------------------------------------------------------------------------
+ Markdown                5          301            0          217           84
+ |- BASH                 1           14           14            0            0
+ |- Rust                 4           93           68            4           21
+ (Total)                            408           82          221          105
+-------------------------------------------------------------------------------
+ Rust                   51         4167         3681          154          332
+ |- Markdown            19          247            0          222           25
+ (Total)                           4414         3681          376          357
+===============================================================================
+ Total                  79         5233         4178          548          507
+===============================================================================
+```
+
 ## Motivation
 
 WASM technology is a very interesting and perspective technology
