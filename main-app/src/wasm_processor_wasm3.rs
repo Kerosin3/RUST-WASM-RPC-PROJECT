@@ -41,7 +41,7 @@ pub mod implement_wasm3 {
         }
         println!(
             "{}",
-            red.apply_to("START WASM PROCESSING USING WASMTIME RUNNER")
+            red.apply_to("START WASM PROCESSING USING WASM3 RUNNER")
         );
         let root_path = project_root::get_project_root().unwrap();
         // Shoore

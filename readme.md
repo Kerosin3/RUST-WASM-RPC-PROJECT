@@ -35,15 +35,16 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 ## Usage
 1. Run `` docker-compose -f docker-compose-redis.yml up `` in redis-compose directory.
-2. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
-3. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
-4. Run `` cargo run -p server --release ``
-5. Run `` cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
+1. Setup desired messages number in file ``shmem-structs/src/lib.rs`` by adjusting ``MESSAGES_NUMBER`` value.
+3. Compile WASM module `` cargo build -p module4-verify --target wasm32-unknown-unknown --release ``
+4. Compile WASM module `` cargo build -p module6-verify --target wasm32-unknown-unknown --release ``
+5. Run `` cargo run -p server --release ``
+6. Run `` cargo run -p main-app --release -- --runner 0 `` to run example with module runtime replace
 
 ## Project structure
 ![](https://github.com/Kerosin3/RUST-WASM-RPC-PROJECT/blob/main/docs/shema.jpg)
 
-## Results
+# Results
 
 ## Hardware Platform
 * x86_64, Intel(R) Core(TM) i7-4770K CPU @ 8 cores @ 3.50GHz 
@@ -133,4 +134,13 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 |   Native	    |   145 ms	|   	1	    |
 |   Wasmtime	|   450 ms	|   	3.1	    |
 |   Wasm3	    |   3.87 s	|   	26	    |
+
+
+## Module Swapping performance
++ Random message (SCHNOOR or ECDSA) of count 1024, runetime module swapping, WASMTIME runtime
+### Hardware Platform
+* x86_64, Intel(R) Core(TM) i7-4771K CPU @ 8 cores @ 3.50GHz 
+* Linux@6.2.2 x86_64
+#### Result
++ total message processing time = 31.2 s, i.e about  30 ms to process one message (include module swapping)
 
