@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => Runner::Native,
     };
     let mthd = Opt::from_args();
-    let _mthd = match mthd.method {
+    match mthd.method {
         0_u32 => unsafe { TEST_MODE = 0_u32 },
         1_u32 => unsafe { TEST_MODE = 1_u32 },
         2_u32 => unsafe { TEST_MODE = 2_u32 },
