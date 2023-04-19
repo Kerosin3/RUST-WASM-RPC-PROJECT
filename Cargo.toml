@@ -35,5 +35,5 @@ strip = "debuginfo"
 [profile.dev]
 opt-level = 0
 debug = true
-codegen-units = 8
+codegen-units = 1
 split-debuginfo = "unpacked"

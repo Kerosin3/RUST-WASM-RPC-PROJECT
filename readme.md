@@ -161,3 +161,20 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 #### Result
 + **total message processing time = 31.2 s, i.e about  30 ms to process one message (include module swapping)**
 
+### Single message performance
+
+- Linux@6.2.2 x86_64, Schorr method: 
+
+|   Runetime	|   Release	|   performance	|
+|---		    |---		|---		    |
+|   Native	    |   141 us	|   	1	    |
+|   Wasmtime	|   422 us	|   	3	    |
+|   Wasm3	    |   7.74 ms	|   	54	    |
+
+## Conclusion
+
+Being a "Web Assembly interpretier" [(meta machine)] ( https://github.com/wasm3/wasm3/blob/main/docs/Interpreter.md#m3-massey-meta-machine ), wasm3 is expectindly demonstrate the worst performance,
+being compared to native and Wasmtime platforms.
+Wasmtime, which utilzes [AOT and JIT technology] ( https://github.com/bytecodealliance/wasmtime#features ), preforms much faster that wasm3,
+but still, x3 slower, than compared to native x86_64 platform.
+
