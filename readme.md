@@ -46,23 +46,20 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 
 ## Project organization
 ```bash
-├── bins
-├── Cargo.lock
+├── bins--------------------pre compiled executables
 ├── Cargo.toml
 ├── docs
-├── interconnect
-├── main-app
-├── memshare
-├── modules
-├── proto
+├── interconnect------------common structeres between WASM and RUST
+├── main-app----------------main application, generates messages and reads back from signer from shared memory
+├── memshare----------------(being created during run) shared memory file
+├── modules-----------------wasm modules sources
+├── proto-------------------protobuf template
 ├── readme.md
-├── redis-compose
+├── redis-compose-----------redis image
 ├── rust-toolchain.toml
-├── server
-├── shmem-structs
-├── target
-├── test_systemd
-└── wasm-core
+├── server------------------server that signs messages which have been prefetched from redis, writes to shared memory
+├── shmem-structs-----------common data struct for shared memory package
+└── wasm-core---------------WASM core library
 ```
 # Results
 
