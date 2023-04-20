@@ -91,7 +91,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * x86_64, Intel(R) Core(TM) i7-4770K CPU @ 8 cores @ 3.50GHz 
 * Linux@Windows-WSL x86_64
 
-### [SCHNOOR] 
+### [SCHNORR] 
  * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
  * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
 
@@ -136,7 +136,7 @@ WASM technology, along with JS, may be used as efficent CPU-bound task executor 
 * x86_64, Intel(R) Core(TM) i7-4771K CPU @ 8 cores @ 3.50GHz 
 * Linux@6.2.1 x86_64
 
-### [SCHNOOR] 
+### [SCHNORR] 
  * 1024 messages, signing method: [Schnorr]( https://en.wikipedia.org/wiki/Schnorr_signature )
  * Optimization: *native*: optimization 3,lto=true, *wasm*: optimization=s,lto=true,strip=true
 
